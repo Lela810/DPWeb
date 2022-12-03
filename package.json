@@ -1,0 +1,40 @@
+{
+    "name": "pfadihue",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "build-dev": "npx tailwindcss -o public/main.css --watch",
+        "build": "npx tailwindcss -o public/main.css",
+        "dev": "npx nodemon index.js",
+        "start": "npm run build-dev | npm run dev"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Lela810/Pfadihue.git"
+    },
+    "author": "Leandro Klaus",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Lela810/Pfadihue/issues"
+    },
+    "homepage": "https://github.com/Lela810/Pfadihue#readme",
+    "devDependencies": {
+        "nodemon": "^2.0.20",
+        "tailwindcss": "^3.2.4"
+    },
+    "dependencies": {
+        "body-parser": "^1.20.1",
+        "cors": "^2.8.5",
+        "dotenv": "^16.0.3",
+        "ejs": "^3.1.8",
+        "express": "^4.18.2",
+        "express-rate-limit": "^6.7.0",
+        "express-session": "^1.17.3",
+        "method-override": "^3.0.0",
+        "morgan": "^1.10.0",
+        "passport": "^0.6.0",
+        "passport-microsoft": "^1.0.0",
+        "path": "^0.12.7"
+    }
+}
