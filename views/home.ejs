@@ -2,27 +2,19 @@
 <html>
 
 <head>
-    <title>Passport-Microsoft Example</title>
-    <link href="/main.css" rel="stylesheet" />
+  <%- include('./partials/head'); %>
+
 </head>
 
-<body class="text-center text-2xl">
-    <% if (!user) { %>
-        <h2>Welcome! Please log in.</h2>
-        <p>
-            <a href="/">Home</a> |
-            <a href="/login">Log In</a>
-        </p>
-        <% } else { %>
-            <h2>Hello,
-                <%= user.displayName %>.</h2>
-            <p>
-                <a href="/">Home</a> |
-                <a href="/account">Account</a> |
-                <a href="/logout">Log Out</a>
-            </p>
-            <% } %>
-                Made with ♥ by Sean Fisher (<a href="https://seafish.io" target="_blank">https://seafish.io</a>)
+<body>
+
+  <%- include('./partials/nav'); %>
+
+  <h3 class=" text-2xl text-center p-2 font-bold">
+    Hallo
+    <%= user.displayName.charAt(0).toUpperCase() + user.displayName.slice(1)  %>
+  </h3>
+
 </body>
 
 </html>

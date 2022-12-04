@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <%- include('./partials/head'); %>
+
+</head>
+
+<body>
+
+  <%- include('./partials/nav'); %>
+
+  <div>
+    <button>
+      <a href="/detailprogramme/edit">Neues DP</a>
+    </button>
+  </div>
+
+  <ul>
+    <% for(let i = 0; i < detailprogramme.length; i++) { %>
+    <li>
+      <span><%= detailprogramme[i].date %></span>
+      <span><%= detailprogramme[i].starttime %></span>
+      <span><%= detailprogramme[i].endtime %></span>
+      <span><%= detailprogramme[i].responsible %></span>
+      <button>
+        <a href="/detailprogramme/edit?detailprogrammId=<%= detailprogramme[i].detailprogrammId %>">Bearbeiten</a>
+      </button>
+    </li>
+    <% } %>
+  </ul>
+
+</body>
+
+</html>

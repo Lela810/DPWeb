@@ -2,14 +2,20 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DP Web</title>
+    <%- include('./partials/head'); %>
 </head>
 
 <body>
-    <h3>DP Web</h3>
+
+    <%- include('./partials/nav'); %>
+
+        <h3 class=" p-5 font-bold text-2xl text-center">
+            Bitte melde dich an, um die Seite zu sehen.
+        </h3>
+        <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mx-auto block">
+    <a href="/login">Login</a>
+  </button>
+
 </body>
 
 </html>
