@@ -3,7 +3,7 @@
 
 <head>
   <%- include('./partials/head'); %>
-  <script type="text/javascript" src="/js/editDetailprogramm.js"></script>
+  <script type="text/javascript" src="/js/dynamicForm.js"></script>
 
 </head>
 
@@ -22,27 +22,24 @@
     <input type="text" name="location" value="<% if(detailprogramm.location) { %><%= detailprogramm.location %><% } %>">
     <label for="responsible">Verantwortlich</label>
     <input type="text" name="responsible" required value="<% if(detailprogramm.responsible) { %><%= detailprogramm.responsible %><% } %>">
-    <label for="ablauf">Ablauf</label>
-    <% if(typeof detailprogramm.ablauf != "undefined") { 
-      for(i=1; i<detailprogramm.ablauf.length +1; i++) { %>
-    <input type="text" name="ablauf" onchange="addAblaufPunkt(<%= i %>)" id="<%= i %>" value="<%= detailprogramm.ablauf[i-1] %>">
-    <% }} else { %>
-    <input type="text" name="ablauf" onchange="addAblaufPunkt(1)" id="1">
-    <% } %>
-    <label for="ablauf">Zeit</label>
-    <% if(typeof detailprogramm.zeit != "undefined") {
-    for(i=0; i<detailprogramm.zeit.length; i++) { %>
-    <input type="text" name="zeit" id="<%= i+9990 %>">
-    <% }} else { %>
-    <input type="text" name="zeit" id="9990">
-    <% } %>
+    <button class=" border-2 rounded-full py-2 px-4 " type="button" onclick="addElement(['zeit', 'ablauf'])">+</button>
+    <label for="ablauf" id="input">Ablauf
+      <% if(typeof detailprogramm.ablauf != "undefined" || typeof detailprogramm.zeit != "undefined") { 
+      for(i=0; i<detailprogramm.ablauf.length; i++) { %>
+      <div>
+        <input type="text" name="zeit" value="<%= detailprogramm.zeit[i] %>" placeholder="Zeit">
+        <input type="text" name="ablauf" value="<%= detailprogramm.ablauf[i] %>" placeholder="Ablauf">
+        <button class=" removeButton border-2 rounded-full py-2 px-4 " type="button">-</button>
+      </div>
+      <% }} %>
+    </label>
     <label for="material">Material</label>
     <input type="text" name="material" value="<% if(detailprogramm.material) { %><%= detailprogramm.material %><% } %>">
     <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save" onclick="confirmSave()">Speichern</button>
   </form>
 </body>
 <footer>
-  <iframe name="frame" style="display:none;"></iframe>
+  <%- include('./partials/footer'); %>
 </footer>
 
 </html>
