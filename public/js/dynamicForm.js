@@ -2,15 +2,21 @@ function removeThisElement() {
 	this.parentElement.remove();
 }
 
-function addElement(names) {
-	const primary = document.createElement('input');
-	primary.type = 'text';
+function addElement(elements, names, types, required) {
+	const primary = document.createElement(elements[0]);
+	primary.type = types[0];
 	primary.name = names[0];
+	if (required[0]) {
+		primary.required = true;
+	}
 	primary.placeholder = names[0].charAt(0).toUpperCase() + names[0].slice(1);
 
-	const secondary = document.createElement('input');
-	secondary.type = 'text';
+	const secondary = document.createElement(elements[1]);
+	secondary.type = types[1];
 	secondary.name = names[1];
+	if (required[1]) {
+		secondary.required = true;
+	}
 	secondary.placeholder = names[1].charAt(0).toUpperCase() + names[1].slice(1);
 
 	const removeButton = document.createElement('button');
@@ -26,14 +32,6 @@ function addElement(names) {
 	div.appendChild(primary);
 	div.appendChild(secondary);
 	div.appendChild(removeButton);
-}
-
-function confirmSave() {
-	const button = document.getElementById('save');
-	button.style.backgroundColor = 'lightgreen';
-	setTimeout(() => {
-		button.style = '';
-	}, 2000);
 }
 
 window.onload = () => {

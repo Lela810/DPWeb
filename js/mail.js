@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-function sendMail(senderMail, receiverMail, subject, text) {
+function sendMail(senderMail, receiverMail, subject, mailHtml) {
 	const transporter = nodemailer.createTransport({
 		host: 'pfadihue-ch.mail.protection.outlook.com',
 		port: 25,
@@ -9,20 +9,11 @@ function sendMail(senderMail, receiverMail, subject, text) {
 		},
 	});
 
-	const notificationMailHtml = `
-        <html>
-            <body>
-                
-<p>Test</p>
-                    
-            </body>
-        </html>`;
-
 	const mailOptions = {
 		from: senderMail,
 		to: receiverMail,
 		subject: subject,
-		html: notificationMailHtml,
+		html: mailHtml,
 	};
 
 	transporter.sendMail(mailOptions, function (error, info) {

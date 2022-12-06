@@ -4,6 +4,7 @@
 <head>
   <%- include('./partials/head'); %>
   <script type="text/javascript" src="/js/dynamicForm.js"></script>
+  <script type="text/javascript" src="/js/confirmSave.js"></script>
 
 </head>
 
@@ -13,28 +14,28 @@
 
   <form id="dpForm" action="<% if(detailprogramm) { %>/detailprogramme/edit?detailprogrammId=<%= detailprogramm.detailprogrammId %><% } else { %>/detailprogramme/create<% } %> " method="POST" target="frame">
     <label for="date">Datum</label>
-    <input type="date" name="date" required value="<% if(detailprogramm.date) { %><%= detailprogramm.date %><% } %>">
+    <input type="date" name="date" required value="<%= detailprogramm.date %>">
     <label for="startTime">Startzeit</label>
-    <input type="time" name="starttime" required value="<% if(detailprogramm.starttime) { %><%= detailprogramm.starttime %><% } %>">
+    <input type="time" name="starttime" required value="<%= detailprogramm.starttime %>">
     <label for="endTime">Endzeit</label>
-    <input type="time" name="endtime" required value="<% if(detailprogramm.endtime) { %><%= detailprogramm.endtime %><% } %>">>
+    <input type="time" name="endtime" required value="<%= detailprogramm.endtime %>">>
     <label for="location">Ort</label>
-    <input type="text" name="location" value="<% if(detailprogramm.location) { %><%= detailprogramm.location %><% } %>">
+    <input type="text" name="location" value="<%= detailprogramm.location %>">
     <label for="responsible">Verantwortlich</label>
-    <input type="text" name="responsible" required value="<% if(detailprogramm.responsible) { %><%= detailprogramm.responsible %><% } %>">
-    <button class=" border-2 rounded-full py-2 px-4 " type="button" onclick="addElement(['zeit', 'ablauf'])">+</button>
+    <input type="text" name="responsible" required value="<%= detailprogramm.responsible %>">
+    <button class=" border-2 rounded-full py-2 px-4 " type="button" onclick="addElement(['input', 'textarea'], ['zeit', 'ablauf'], ['text', 'text'], ['false', 'false'])">+</button>
     <label for="ablauf" id="input">Ablauf
       <% if(typeof detailprogramm.ablauf != "undefined" || typeof detailprogramm.zeit != "undefined") { 
       for(i=0; i<detailprogramm.ablauf.length; i++) { %>
       <div>
-        <input type="text" name="zeit" value="<%= detailprogramm.zeit[i] %>" placeholder="Zeit">
-        <input type="text" name="ablauf" value="<%= detailprogramm.ablauf[i] %>" placeholder="Ablauf">
+        <input type="text" name="zeit" value="<%= detailprogramm.zeit[i] %>" placeholder="Zeit" />
+        <textarea type="text" name="ablauf" placeholder="Ablauf"><%= detailprogramm.ablauf[i] %></textarea>
         <button class=" removeButton border-2 rounded-full py-2 px-4 " type="button">-</button>
       </div>
       <% }} %>
     </label>
     <label for="material">Material</label>
-    <input type="text" name="material" value="<% if(detailprogramm.material) { %><%= detailprogramm.material %><% } %>">
+    <input type="text" name="material" value="<%= detailprogramm.material %>">
     <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save" onclick="confirmSave()">Speichern</button>
   </form>
 </body>

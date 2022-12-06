@@ -9,11 +9,11 @@ const recipientsSchema = new mongoose.Schema(
 			index: true,
 		},
 		mail: {
-			type: Array,
+			type: String,
 			required: true,
 		},
 		name: {
-			type: Array,
+			type: String,
 			required: true,
 		},
 	},

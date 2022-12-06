@@ -8,17 +8,42 @@ const express = require('express'),
 	session = require('express-session'),
 	rateLimit = require('express-rate-limit'),
 	cors = require('cors'),
-	mongoose = require('mongoose');
+	mongoose = require('mongoose'),
+	cookieParser = require('cookie-parser'),
+	MongoStore = require('connect-mongo'),
+	path = require('path');
 
-if (!process.env.MONGODB_USERNAME || !process.env.MONGODB_PASSWORD) {
-	mongoose.connect(`mongodb://${process.env.MONGODB}/DPWEB`, {
+const app = express();
+const oneDay = 1000 * 60 * 60 * 24;
+let sessionParams = {
+	secret: process.env.SESSION_SECRET,
+	saveUninitialized: true,
+	cookie: { maxAge: oneDay },
+	resave: false,
+};
+
+if (!process.env.DEV) {
+	const mongoDBUrl = `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB}/DPWEB`;
+
+	mongoose.connect(mongoDBUrl, {
 		useNewUrlParser: true,
 	});
+	Object.assign(sessionParams, {
+		store: MongoStore.create({ mongoUrl: mongoDBUrl }),
+		mongoOptions: { useNewUrlParser: true },
+	});
+	app.set('trust proxy', 1);
+	sessionParams.cookie.secure = true;
 } else {
-	mongoose.connect(
-		`mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB}/DPWEB`,
-		{ useNewUrlParser: true }
-	);
+	const mongoDBUrl = `mongodb://${process.env.MONGODB}/DPWEB`;
+	mongoose.connect(mongoDBUrl, { useNewUrlParser: true });
+	Object.assign(sessionParams, {
+		store: MongoStore.create({
+			mongoUrl: mongoDBUrl,
+			mongoOptions: { useNewUrlParser: true },
+		}),
+	});
+	app.use(morgan('dev'));
 }
 
 const db = mongoose.connection;
@@ -57,22 +82,14 @@ passport.use(
 	)
 );
 
-const app = express();
-
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(bodyParser.raw());
+app.use(cookieParser());
 app.use(methodOverride());
-app.use(
-	session({
-		secret: process.env.SESSION_SECRET,
-		resave: false,
-		saveUninitialized: true,
-	})
-);
+app.use(session(sessionParams));
 app.use(
 	cors({
 		origin: '*',
@@ -82,9 +99,18 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./js/routes.js')(app, passport, ensureAuthenticated, limiter);
+require('./routes/authRoute.js')(app, passport, limiter);
+require('./routes/detailprogrammeRoute.js')(app, ensureAuthenticated, limiter);
+require('./routes/mailRoute.js')(app, ensureAuthenticated, limiter);
+require('./routes/recipientsRoute.js')(app, ensureAuthenticated, limiter);
+require('./routes/inviteRoute.js')(app, limiter);
+require('./routes/homeRoute.js')(app, ensureAuthenticated, limiter);
 
 app.use(express.static(__dirname + '/public'));
+app.use(
+	'/tinymce',
+	express.static(path.join(__dirname, 'node_modules', 'tinymce'))
+);
 
 app.listen(3000);
 

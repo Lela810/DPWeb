@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <%- include('./partials/head'); %>
+  <script type="text/javascript" src="/js/confirmSave.js"></script>
+  <script type="text/javascript" src="/tinymce/tinymce.min.js"></script>
+
+
+  <% if(Object.keys(mail).length > 0) { %>
+  <script type="text/javascript" src="/js/tinymce-configReadonly.js"></script>
+  <% } else { %>
+  <script type="text/javascript" src="/js/tinymce-config.js"></script>
+  <% } %>
+
+</head>
+
+<body>
+
+  <%- include('./partials/nav'); %>
+
+  <form id="mailForm" action="/mail/editor" method="POST">
+
+    <label for="subject">Betreff</label>
+    <input type="text" name="subject" required value="<%= mail.subject %>" <% if(Object.keys(mail).length > 0) { %>readonly<% } %>>
+
+    <label for="invite">Abmelden?</label>
+    <input type="checkbox" name="invite" required checked="<%= mail.invite %>" <% if(Object.keys(mail).length > 0) { %>onclick="return false;" <% } %>>
+
+    <label for="message">Nachricht</label>
+    <textarea name="message" id="editor" required><%= mail.message %></textarea>
+
+    <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save">Senden</button>
+  </form>
+
+  <% if (Object.keys(responses).length > 0) { %>
+  <ul>
+    <% for(let i = 0; i < responses.names.length; i++) { %>
+    <li>
+      <span><%= responses.names[i] %></span>
+      <span><%= responses.mails[i] %></span>
+    </li>
+    <% } %>
+  </ul>
+  <% } %>
+
+</body>
+<footer>
+  <%- include('./partials/footer'); %>
+</footer>
+
+</html>
