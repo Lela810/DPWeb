@@ -9,6 +9,7 @@ async function createDetailprogramm(json) {
 
 	try {
 		await detailprogrammEntry.save();
+		return await detailprogrammEntry.get('detailprogrammId');
 	} catch (err) {
 		throw err;
 	}
@@ -29,6 +30,7 @@ async function createMail(json) {
 
 	try {
 		await mailEntry.save();
+		return await mailEntry.get('mailId');
 	} catch (err) {
 		throw err;
 	}
@@ -60,7 +62,7 @@ async function addResponse(mailId, name, mail) {
 			mailId: mailId,
 		})
 	)[0];
-	console.log(responseEntry);
+
 	responseEntry.names.push(name);
 	responseEntry.mails.push(mail);
 

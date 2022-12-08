@@ -40,13 +40,17 @@ module.exports = function (app, ensureAuthenticated, limiter) {
 			message: req.body.message,
 		};
 		try {
-			await createMail(mailRaw);
-			const mailEntry = (await loadAllMails(mailRaw))[0];
+			const mailId = await createMail(mailRaw);
+			const mailEntry = await loadMail(mailId);
 			distributeMail(mailEntry);
 			res.redirect('/mail');
 		} catch (error) {
 			console.log(error);
-			res.sendStatus(500);
+			res.render('error', {
+				user: req.user,
+				page: 500,
+				errorcode: 500,
+			});
 		}
 	});
 };

@@ -1,3 +1,5 @@
+const validate = require('validate.js');
+
 module.exports = function (app, ensureAuthenticated, limiter) {
 	app.get('/', limiter, function (req, res) {
 		if (req.isAuthenticated()) {
@@ -14,6 +16,7 @@ module.exports = function (app, ensureAuthenticated, limiter) {
 		res.render('home', {
 			user: req.user,
 			page: 'Home',
+			validate: validate,
 		});
 	});
 };

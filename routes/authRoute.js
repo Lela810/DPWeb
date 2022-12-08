@@ -10,7 +10,9 @@ module.exports = function (app, passport, limiter) {
 	app.get(
 		'/auth/microsoft/callback',
 		limiter,
-		passport.authenticate('microsoft', { failureRedirect: '/login' }),
+		passport.authenticate('microsoft', {
+			failureRedirect: '/',
+		}),
 		function (req, res) {
 			res.redirect('/');
 		}

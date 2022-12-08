@@ -35,13 +35,21 @@ module.exports = function (app, ensureAuthenticated, limiter) {
 		'/detailprogramme/create',
 		ensureAuthenticated,
 		limiter,
-		(req, res) => {
+		async (req, res) => {
 			try {
-				createDetailprogramm(req.body);
-				res.sendStatus(200);
+				const newEntryId = await createDetailprogramm(req.body);
+				res.render('editDetailprogramm', {
+					user: req.user,
+					page: 'Detailprogramme',
+					detailprogramm: await loadDetailprogramm(newEntryId),
+				});
 			} catch (error) {
 				console.log(error);
-				res.sendStatus(500);
+				res.render('error', {
+					user: req.user,
+					page: 500,
+					errorcode: 500,
+				});
 			}
 		}
 	);
@@ -49,13 +57,21 @@ module.exports = function (app, ensureAuthenticated, limiter) {
 		'/detailprogramme/edit',
 		ensureAuthenticated,
 		limiter,
-		(req, res) => {
+		async (req, res) => {
 			try {
 				editDetailprogramm(req.query.detailprogrammId, req.body);
-				res.sendStatus(200);
+				res.render('editDetailprogramm', {
+					user: req.user,
+					page: 'Detailprogramme',
+					detailprogramm: await loadDetailprogramm(req.query.detailprogrammId),
+				});
 			} catch (error) {
 				console.log(error);
-				res.sendStatus(500);
+				res.render('error', {
+					user: req.user,
+					page: 500,
+					errorcode: 500,
+				});
 			}
 		}
 	);

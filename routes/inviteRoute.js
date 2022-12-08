@@ -1,3 +1,4 @@
+const validate = require('validate.js');
 const {
 	loadAllMails,
 	loadAllInvites,
@@ -26,6 +27,7 @@ module.exports = function (app, limiter) {
 			page: 'invite',
 			recipients: recipients,
 			mailId: req.query.mailId,
+			validate: validate,
 		});
 	});
 
@@ -45,7 +47,11 @@ module.exports = function (app, limiter) {
 			res.sendStatus(200);
 		} catch (error) {
 			console.log(error);
-			res.sendStatus(500);
+			res.render('error', {
+				user: req.user,
+				page: 500,
+				errorcode: 500,
+			});
 		}
 	});
 };

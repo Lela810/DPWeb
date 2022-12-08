@@ -12,7 +12,7 @@
 
   <%- include('./partials/nav'); %>
 
-  <form id="dpForm" action="<% if(detailprogramm) { %>/detailprogramme/edit?detailprogrammId=<%= detailprogramm.detailprogrammId %><% } else { %>/detailprogramme/create<% } %> " method="POST" target="frame">
+  <form id="dpForm" action="<% if(detailprogramm) { %>/detailprogramme/edit?detailprogrammId=<%= detailprogramm.detailprogrammId %><% } else { %>/detailprogramme/create<% } %> " method="POST">
     <label for="date">Datum</label>
     <input type="date" name="date" required value="<%= detailprogramm.date %>">
     <label for="startTime">Startzeit</label>
@@ -23,17 +23,17 @@
     <input type="text" name="location" value="<%= detailprogramm.location %>">
     <label for="responsible">Verantwortlich</label>
     <input type="text" name="responsible" required value="<%= detailprogramm.responsible %>">
+    <label for="ablauf" id="input">Ablauf</label>
     <button class=" border-2 rounded-full py-2 px-4 " type="button" onclick="addElement(['input', 'textarea'], ['zeit', 'ablauf'], ['text', 'text'], ['false', 'false'])">+</button>
-    <label for="ablauf" id="input">Ablauf
-      <% if(typeof detailprogramm.ablauf != "undefined" || typeof detailprogramm.zeit != "undefined") { 
+    <% if(typeof detailprogramm.ablauf != "undefined" || typeof detailprogramm.zeit != "undefined") { 
       for(i=0; i<detailprogramm.ablauf.length; i++) { %>
-      <div>
-        <input type="text" name="zeit" value="<%= detailprogramm.zeit[i] %>" placeholder="Zeit" />
-        <textarea type="text" name="ablauf" placeholder="Ablauf"><%= detailprogramm.ablauf[i] %></textarea>
-        <button class=" removeButton border-2 rounded-full py-2 px-4 " type="button">-</button>
-      </div>
-      <% }} %>
-    </label>
+    <div>
+      <input type="text" name="zeit" value="<%= detailprogramm.zeit[i] %>" placeholder="Zeit" />
+      <textarea type="text" name="ablauf" placeholder="Ablauf"><%= detailprogramm.ablauf[i] %></textarea>
+      <button class=" removeButton border-2 rounded-full py-2 px-4 " type="button">-</button>
+    </div>
+    <% }} %>
+
     <label for="material">Material</label>
     <input type="text" name="material" value="<%= detailprogramm.material %>">
     <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save" onclick="confirmSave()">Speichern</button>

@@ -12,7 +12,8 @@
 
   <%- include('./partials/nav'); %>
 
-  <form id="recipientsForm" action="/recipients" method="POST" target="frame">
+
+  <form id="recipientsForm" action="/recipients" method="POST">
     <button class=" border-2 rounded-full py-2 px-4 " type="button" onclick="addElement(['input', 'input'], ['mail', 'name'], ['mail', 'text'], ['true', 'true'])">+</button>
     <label for="ablauf" id="input">Empfänger
       <% if(Array.isArray(recipients)) { 
@@ -25,6 +26,11 @@
       <% }} %>
     </label>
     <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save" onclick="confirmSave()">Speichern</button>
+    <% if(typeof error !== 'undefined') { %>
+    <p class=" p-5 font-bold text-base text-red-700">
+      <%= error %>
+      </>
+      <% } %>
   </form>
 
 </body>
