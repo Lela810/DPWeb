@@ -21,6 +21,7 @@
       <div>
         <input type="mail" name="mail" value="<%= recipients[i].mail %>" placeholder="Mail" required>
         <input type="text" name="name" value="<%= recipients[i].name %>" placeholder="Name" required>
+        <input type="id" name="id" value="<%= recipients[i].id %>" required hidden>
         <button class=" removeButton border-2 rounded-full py-2 px-4 " type="button">-</button>
       </div>
       <% }} %>

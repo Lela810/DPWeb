@@ -19,7 +19,7 @@
   <ul>
     <% for(let i = 0; i < mails.length; i++) { %>
     <li>
-      <a href="/mail/editor?mailId=<%= mails[i].mailId %>">
+      <a href="/mail/editor?id=<%= mails[i].id %>">
         <span><%= mails[i].sender %></span>
         <span><%= mails[i].subject %></span>
         <span><% const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }; %><%= mails[i].date.toLocaleString("de-CH", options) %></span>

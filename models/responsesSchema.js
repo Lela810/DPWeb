@@ -3,11 +3,6 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const responsesSchema = new mongoose.Schema(
 	{
-		responseId: {
-			type: Number,
-			unique: true,
-			index: true,
-		},
 		mailId: {
 			type: Number,
 			required: true,
@@ -23,7 +18,5 @@ const responsesSchema = new mongoose.Schema(
 	},
 	{ collection: 'responses' }
 );
-
-responsesSchema.plugin(AutoIncrement, { inc_field: 'responseId' });
 
 module.exports = mongoose.model('Responses', responsesSchema);

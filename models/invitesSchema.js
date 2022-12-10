@@ -3,11 +3,6 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const invitesSchema = new mongoose.Schema(
 	{
-		inviteId: {
-			type: Number,
-			unique: true,
-			index: true,
-		},
 		mailId: {
 			type: Number,
 			required: true,
@@ -23,7 +18,5 @@ const invitesSchema = new mongoose.Schema(
 	},
 	{ collection: 'invites' }
 );
-
-invitesSchema.plugin(AutoIncrement, { inc_field: 'inviteId' });
 
 module.exports = mongoose.model('Invites', invitesSchema);

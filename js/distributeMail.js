@@ -1,5 +1,6 @@
 const { sendMail } = require('./mail.js');
-const { createInvite, createResponse } = require('./db.js');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 
 function onlyUnique(value, index, self) {
 	return self.indexOf(value) === index;
@@ -16,7 +17,7 @@ function makeid(length) {
 	return result;
 }
 
-function distributeMail(mailEntry) {
+async function distributeMail(mailEntry) {
 	let unfilteredReceivers = [];
 	mailEntry.receivers.forEach((receiver) => {
 		unfilteredReceivers.push(receiver.mail);
@@ -25,7 +26,7 @@ function distributeMail(mailEntry) {
 
 	if (mailEntry.invite) {
 		let inviteEntry = {
-			mailId: mailEntry.mailId,
+			mailId: mailEntry.id,
 			identifiers: [],
 			mails: [],
 		};
@@ -33,16 +34,20 @@ function distributeMail(mailEntry) {
 			inviteEntry.identifiers.push(makeid(20));
 			inviteEntry.mails.push(receiver);
 		});
-		createInvite(inviteEntry);
-		createResponse({
-			mailId: mailEntry.mailId,
-			names: [],
-			mails: [],
+		await prisma.invites.create({
+			data: inviteEntry,
+		});
+		await prisma.responses.create({
+			data: {
+				mailId: mailEntry.id,
+				names: [],
+				mails: [],
+			},
 		});
 
 		filteredReceivers.forEach((receiver) => {
-			const inviteLink = `http://localhost:3000/invite?mailId=${
-				mailEntry.mailId
+			const inviteLink = `http://localhost:3000/invite?id=${
+				mailEntry.id
 			}&identifier=${
 				inviteEntry.identifiers[inviteEntry.mails.indexOf(receiver)]
 			}`;

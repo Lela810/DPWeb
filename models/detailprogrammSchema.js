@@ -3,11 +3,6 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const detailprogrammSchema = new mongoose.Schema(
 	{
-		detailprogrammId: {
-			type: Number,
-			unique: true,
-			index: true,
-		},
 		date: {
 			type: String,
 			required: true,
@@ -43,7 +38,5 @@ const detailprogrammSchema = new mongoose.Schema(
 	},
 	{ collection: 'detailprogramme' }
 );
-
-detailprogrammSchema.plugin(AutoIncrement, { inc_field: 'detailprogrammId' });
 
 module.exports = mongoose.model('Detailprogramm', detailprogrammSchema);

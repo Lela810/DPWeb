@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type MailsReceivers {
+  id   String @map("_id") @db.ObjectId
+  mail String
+  name String
+}
+
+model detailprogramme {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  ablauf      String[]
+  date        String
+  endtime     String
+  location    String
+  material    String
+  responsible String
+  starttime   String
+  zeit        String[]
+}
+
+model invites {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  identifiers String[]
+  mailId      String   @unique
+  mails       String[]
+}
+
+model mails {
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  date      DateTime         @default(now()) @db.Date
+  invite    Boolean
+  message   String
+  receivers MailsReceivers[]
+  sender    String
+  subject   String
+}
+
+model recipients {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  mail String
+  name String
+
+  @@unique([mail, name])
+}
+
+model responses {
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  mailId String   @unique
+  mails  String[]
+  names  String[]
+}
+
+model sessions {
+  id      String   @id @map("_id")
+  expires DateTime @db.Date
+  session String
+}

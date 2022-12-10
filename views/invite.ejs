@@ -18,7 +18,7 @@
   <form action="/invite" method="POST" target="frame">
     <input type="text" name="name" value="<%= validate.capitalize(recipients[i].name) %>" readonly>
     <input type="text" name="mail" value="<%= recipients[i].mail %>" readonly>
-    <input type="text" name="mailId" value="<%= mailId %>" readonly hidden>
+    <input type="text" name="id" value="<%= id %>" readonly hidden>
     <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save" onclick="confirmSave()">Abmelden</button>
   </form>
   <% } %>
