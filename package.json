@@ -1,13 +1,15 @@
 {
-	"name": "pfadihue",
+	"name": "dpweb",
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
+	"type": "module",
 	"scripts": {
-		"build-dev": "npx tailwindcss -o public/main.css --watch",
-		"build": "npx tailwindcss -o public/main.css",
-		"dev": "npx nodemon index.js",
-		"generatePrisma": "npx prisma generate"
+		"build-css": "npx tailwindcss -o public/main.css",
+		"gulp": "npx gulp",
+		"start": "node ./dist/index.js",
+		"dev": "npx nodemon --watch 'src/**/*.ts' --exec ts-node-esm src/index.ts",
+		"build-prisma": "npx prisma generate"
 	},
 	"repository": {
 		"type": "git",
@@ -20,9 +22,23 @@
 	},
 	"homepage": "https://github.com/Lela810/Pfadihue#readme",
 	"devDependencies": {
-		"morgan": "^1.10.0",
+		"@types/cookie-parser": "^1.4.3",
+		"@types/cors": "^2.8.13",
+		"@types/dotenv": "^8.2.0",
+		"@types/express": "^4.17.14",
+		"@types/express-session": "^1.17.5",
+		"@types/method-override": "^0.0.32",
+		"@types/morgan": "^1.9.3",
+		"@types/node": "^18.11.13",
+		"@types/nodemailer": "^6.4.6",
+		"@types/passport": "^1.0.11",
+		"@types/passport-microsoft": "^0.0.0",
+		"del": "^7.0.0",
+		"gulp": "^4.0.2",
+		"gulp-typescript": "^6.0.0-alpha.1",
 		"nodemon": "^2.0.20",
-		"tailwindcss": "^3.2.4"
+		"tailwindcss": "^3.2.4",
+		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.7.1",
@@ -37,7 +53,7 @@
 		"express-rate-limit": "^6.7.0",
 		"express-session": "^1.17.3",
 		"method-override": "^3.0.0",
-		"mongoose-sequence": "^5.3.1",
+		"morgan": "^1.10.0",
 		"nodemailer": "^6.8.0",
 		"passport": "^0.6.0",
 		"passport-microsoft": "^1.0.0",

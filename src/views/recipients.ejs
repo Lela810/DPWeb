@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <%- include('./partials/head'); %>
+  <script type="text/javascript" src="/js/dynamicForm.js"></script>
+  <script type="text/javascript" src="/js/confirmSave.js"></script>
+
+</head>
+
+<body>
+
+  <%- include('./partials/nav'); %>
+
+
+  <form id="recipientsForm" action="/recipients" method="POST">
+    <button class=" border-2 rounded-full py-2 px-4 " type="button" onclick="addElement(['input', 'input'], ['mail', 'name'], ['mail', 'text'], ['true', 'true'])">+</button>
+    <label for="ablauf" id="input">Empfänger
+      <% if(Array.isArray(recipients)) { 
+      for(i=0; i<recipients.length; i++) { %>
+      <div>
+        <input type="mail" name="mail" value="<%= recipients[i].mail %>" placeholder="Mail" required>
+        <input type="text" name="name" value="<%= recipients[i].name %>" placeholder="Name" required>
+        <input type="id" name="id" value="<%= recipients[i].id %>" required hidden>
+        <button class=" removeButton border-2 rounded-full py-2 px-4 " type="button">-</button>
+      </div>
+      <% }} %>
+    </label>
+    <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save" onclick="confirmSave()">Speichern</button>
+    <% if(typeof error !== 'undefined') { %>
+    <p class=" p-5 font-bold text-base text-red-700">
+      <%= error %>
+      </>
+      <% } %>
+  </form>
+
+</body>
+<footer>
+  <%- include('./partials/footer'); %>
+</footer>
+
+</html>
