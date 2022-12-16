@@ -14,15 +14,20 @@ type MailsReceivers {
 }
 
 model detailprogramme {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  ablauf      String[]
-  date        String
-  endtime     String
-  location    String
-  material    String
-  responsible String
-  starttime   String
-  zeit        String[]
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  ablauf               String[]
+  date                 String
+  endtime              String
+  location             String
+  material             String
+  responsible          String
+  starttime            String
+  zeit                 String[]
+  anschlagText         String
+  anschlagMitnehmen    String
+  anschlagAbmeldenBis  String
+  anschlagAbmeldenMail String
+  activityId           String
 }
 
 model invites {
@@ -33,13 +38,15 @@ model invites {
 }
 
 model mails {
-  id        String           @id @default(auto()) @map("_id") @db.ObjectId
-  date      DateTime         @default(now()) @db.Date
-  invite    Boolean
-  message   String
-  receivers MailsReceivers[]
-  sender    String
-  subject   String
+  id               String           @id @default(auto()) @map("_id") @db.ObjectId
+  date             DateTime         @default(now()) @db.Date
+  invite           Boolean
+  message          String
+  receivers        MailsReceivers[]
+  sender           String
+  subject          String
+  activityId       String?
+  detailprogrammId String?
 }
 
 model recipients {
@@ -55,6 +62,14 @@ model responses {
   mailId String   @unique
   mails  String[]
   names  String[]
+}
+
+model activities {
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  mailId           String
+  detailprogrammId String
+  date             String
+  name             String
 }
 
 model sessions {

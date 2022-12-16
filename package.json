@@ -8,7 +8,7 @@
 		"build-css": "npx tailwindcss -o src/public/main.css",
 		"gulp": "npx gulp",
 		"start": "node ./dist/index.js",
-		"dev": "npx nodemon --watch './src/**/*.ts' --exec ts-node-esm src/index.ts",
+		"dev": "npx nodemon --exec ts-node-esm src/index.ts",
 		"build-prisma": "npx prisma generate"
 	},
 	"repository": {
@@ -42,7 +42,10 @@
 		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
+		"@pdfme/generator": "^1.0.17",
+		"@pdfme/ui": "^1.0.17",
 		"@prisma/client": "^4.7.1",
+		"@types/jest": "^29.2.4",
 		"body-parser": "^1.20.1",
 		"bson": "^4.7.0",
 		"connect-mongo": "^4.6.0",
@@ -62,5 +65,17 @@
 		"prisma": "^4.7.1",
 		"tinymce": "^6.3.0",
 		"validate.js": "^0.13.1"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
 	}
 }

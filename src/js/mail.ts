@@ -7,8 +7,8 @@ export function sendMail(
 	mailHtml: string
 ) {
 	const transporter = nodemailer.createTransport({
-		host: 'outlook.office365.com',
-		port: 587,
+		host: 'pfadihue.mail.protection.outlook.com',
+		port: 25,
 		auth: {
 			user: senderMail,
 		},

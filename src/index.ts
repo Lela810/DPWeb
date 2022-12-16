@@ -11,14 +11,17 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import MongoStore from 'connect-mongo';
 import path from 'path';
-import { authRouter } from './routes/authRouter.js';
-import { detailprogrammeRouter } from './routes/detailprogrammeRouter.js';
-import { homeRouter } from './routes/homeRouter.js';
-import { inviteRouter } from './routes/inviteRouter.js';
-import { mailRouter } from './routes/mailRouter.js';
-import { indexRouter } from './routes/indexRouter.js';
+import {
+	authRouter,
+	detailprogrammeRouter,
+	homeRouter,
+	inviteRouter,
+	mailRouter,
+	indexRouter,
+	recipientsRouter,
+	activitiesRouter,
+} from './routes/index.js';
 import { limiter, errorHandler } from './js/middleware.js';
-import { recipientsRouter } from './routes/recipientsRouter.js';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -121,12 +124,14 @@ app.use('/home', ensureAuthenticated, homeRouter);
 app.use('/invite', ensureAuthenticated, inviteRouter);
 app.use('/mail', ensureAuthenticated, mailRouter);
 app.use('/recipients', ensureAuthenticated, recipientsRouter);
+app.use('/activities', ensureAuthenticated, activitiesRouter);
 app.use('/', indexRouter);
 app.use(errorHandler);
 
-app.use(express.static(path.join(__dirname + '/public')));
+app.use(express.static(path.join(__dirname, './public')));
 app.use(
 	'/tinymce',
+	ensureAuthenticated,
 	express.static(path.join(__dirname, '../node_modules', 'tinymce'))
 );
 

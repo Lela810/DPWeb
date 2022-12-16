@@ -11,21 +11,17 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import MongoStore from 'connect-mongo';
 import path from 'path';
-import { authRouter } from './routes/authRouter.js';
-import { detailprogrammeRouter } from './routes/detailprogrammeRouter.js';
-import { homeRouter } from './routes/homeRouter.js';
-import { inviteRouter } from './routes/inviteRouter.js';
-import { mailRouter } from './routes/mailRouter.js';
-import { indexRouter } from './routes/indexRouter.js';
-import { limiter } from './js/middleware.js';
-import { recipientsRouter } from './routes/recipientsRouter.js';
+import { authRouter, detailprogrammeRouter, homeRouter, inviteRouter, mailRouter, indexRouter, recipientsRouter, } from './routes/index.js';
+import { limiter, errorHandler } from './js/middleware.js';
 import { fileURLToPath } from 'url';
+import { generatePdf } from './js/pdf.js';
+generatePdf();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: '../.env' });
 const app = express();
 const oneDay = 1000 * 60 * 60 * 24;
-let logStream = fs.createWriteStream(path.join(__dirname, 'current.log'), {
+const logStream = fs.createWriteStream(path.join(__dirname, 'current.log'), {
     flags: 'a',
 });
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -83,6 +79,7 @@ app.use('/invite', ensureAuthenticated, inviteRouter);
 app.use('/mail', ensureAuthenticated, mailRouter);
 app.use('/recipients', ensureAuthenticated, recipientsRouter);
 app.use('/', indexRouter);
+app.use(errorHandler);
 app.use(express.static(path.join(__dirname + '/public')));
 app.use('/tinymce', express.static(path.join(__dirname, '../node_modules', 'tinymce')));
 app.listen(3000);

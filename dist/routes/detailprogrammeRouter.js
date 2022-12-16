@@ -9,14 +9,19 @@ detailprogrammeRouter.get('/', async function (req, res) {
         detailprogramme: await prisma.detailprogramme.findMany(),
     });
 });
-detailprogrammeRouter.get('/edit', async function (req, res) {
+detailprogrammeRouter.get('/edit', async function (req, res, next) {
     let detailprogramm = {};
     if (req.query.id != undefined) {
-        detailprogramm = await prisma.detailprogramme.findUnique({
-            where: {
-                id: req.query.id,
-            },
-        });
+        try {
+            detailprogramm = await prisma.detailprogramme.findUniqueOrThrow({
+                where: {
+                    id: req.query.id,
+                },
+            });
+        }
+        catch (error) {
+            next(error);
+        }
     }
     res.render('editDetailprogramm', {
         user: req.user,
@@ -24,18 +29,15 @@ detailprogrammeRouter.get('/edit', async function (req, res) {
         detailprogramm: detailprogramm,
     });
 });
-detailprogrammeRouter.post('/create', async (req, res) => {
+detailprogrammeRouter.post('/create', async (req, res, next) => {
     try {
         const newEntry = await prisma.detailprogramme.create({
             data: req.body,
-            select: {
-                id: true,
-            },
         });
         res.render('editDetailprogramm', {
             user: req.user,
             page: 'Detailprogramme',
-            detailprogramm: await prisma.detailprogramme.findUnique({
+            detailprogramm: await prisma.detailprogramme.findUniqueOrThrow({
                 where: {
                     id: newEntry.id,
                 },
@@ -43,18 +45,14 @@ detailprogrammeRouter.post('/create', async (req, res) => {
         });
     }
     catch (error) {
-        console.log(error);
-        res.render('error', {
-            user: req.user,
-            page: 500,
-            errorcode: 500,
-        });
+        next(error);
     }
 });
-detailprogrammeRouter.post('/edit', async (req, res) => {
+detailprogrammeRouter.post('/edit', async (req, res, next) => {
     try {
+        const detailprogrammEntry = req.body;
         await prisma.detailprogramme.update({
-            data: req.body,
+            data: detailprogrammEntry,
             where: {
                 id: req.query.id,
             },
@@ -62,7 +60,7 @@ detailprogrammeRouter.post('/edit', async (req, res) => {
         res.render('editDetailprogramm', {
             user: req.user,
             page: 'Detailprogramme',
-            detailprogramm: await prisma.detailprogramme.findUnique({
+            detailprogramm: await prisma.detailprogramme.findUniqueOrThrow({
                 where: {
                     id: req.query.id,
                 },
@@ -70,11 +68,6 @@ detailprogrammeRouter.post('/edit', async (req, res) => {
         });
     }
     catch (error) {
-        console.log(error);
-        res.render('error', {
-            user: req.user,
-            page: 500,
-            errorcode: 500,
-        });
+        next(error);
     }
 });

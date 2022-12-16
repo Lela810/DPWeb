@@ -1,32 +1,18 @@
-import { recipients } from '@prisma/client';
+import {
+	detailprogramme,
+	invites,
+	mails,
+	recipients,
+	activities,
+} from '@prisma/client';
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-export interface mailEntry {
-	invite: boolean;
-	sender: string;
-	receivers: recipients[];
-	subject: string;
-	message: string;
-	date: string;
-}
-
-export interface inviteEntry {
-	mailId: string;
-	identifiers: string[];
-	mails: string[];
-}
-
-export interface recipientEntry {
-	mail: string;
-	name: string;
-}
-
-export interface detailprogrammEntry {
-	ablauf: string[];
-	date: string;
-	endtime: string;
-	location: string;
-	material: string;
-	responsible: string;
-	starttime: string;
-	zeit: string[];
-}
+export type detailprogrammEntry = PartialBy<detailprogramme, 'id'>;
+export type mailEntry = PartialBy<
+	PartialBy<PartialBy<mails, 'id'>, 'date'>,
+	'activityId'
+>;
+export type inviteEntry = PartialBy<invites, 'id'>;
+export type recipientEntry = PartialBy<recipients, 'id'>;
+export type activitiesEntry = PartialBy<activities, 'id'>;

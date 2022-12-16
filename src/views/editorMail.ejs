@@ -19,6 +19,7 @@
 
   <%- include('./partials/nav'); %>
 
+  <div id="container"></div>
   <form id="mailForm" action="/mail/editor" method="POST">
 
     <label for="subject">Betreff</label>
@@ -29,6 +30,11 @@
 
     <label for="message">Nachricht</label>
     <textarea name="message" id="editor" required><%= mail.message %></textarea>
+
+
+    <% if(typeof activity != "undefined") { %>
+    <input type="activityId" name="activityId" value="<%= activity.id %>" hidden>
+    <% } %>
 
     <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save">Senden</button>
   </form>
