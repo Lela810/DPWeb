@@ -2,26 +2,14 @@ import { distributeMail } from '../js/distributeMail.js';
 import { mails, PrismaClient, responses } from '@prisma/client';
 const prisma = new PrismaClient();
 import express from 'express';
-import { activitiesEntry, mailEntry } from '../types/prismaEntry.js';
+import {
+	activitiesEntry,
+	detailprogrammEntry,
+	mailEntry,
+} from '../types/prismaEntry.js';
+import MailMessage from 'nodemailer/lib/mailer/mail-message.js';
 
 export const mailRouter = express.Router();
-
-async function updateActivity(mailEntry: mails) {
-	let activity = await prisma.activities.findUniqueOrThrow({
-		where: {
-			id: mailEntry.activityId as string,
-		},
-	});
-	activity.mailId = mailEntry.id as string;
-	const newActivity: activitiesEntry = activity;
-	delete newActivity.id;
-	await prisma.activities.update({
-		data: newActivity,
-		where: {
-			id: mailEntry.activityId as string,
-		},
-	});
-}
 
 mailRouter.get(
 	'/',
@@ -35,7 +23,7 @@ mailRouter.get(
 );
 
 mailRouter.get(
-	'/editor',
+	'/view',
 	async function (
 		req: express.Request,
 		res: express.Response,
@@ -46,26 +34,47 @@ mailRouter.get(
 			let responses: responses = {} as responses;
 			let mailId = '';
 			let activity;
-			if (req.query.activityId != undefined) {
-				activity = await prisma.activities.findUniqueOrThrow({
-					where: {
-						id: req.query.activityId as string,
-					},
-				});
-				mailId = activity.mailId as string;
-			}
-			if (req.query.id != undefined || mailId != '') {
-				mail = await prisma.mails.findUniqueOrThrow({
-					where: {
-						id: (req.query.id as string) || (mailId as string),
-					},
-				});
-				responses = await prisma.responses.findUniqueOrThrow({
-					where: {
-						mailId: (req.query.id as string) || (mailId as string),
-					},
-				});
-			}
+
+			mail = await prisma.mails.findUniqueOrThrow({
+				where: {
+					id: (req.query.id as string) || (mailId as string),
+				},
+			});
+			responses = await prisma.responses.findUniqueOrThrow({
+				where: {
+					mailId: (req.query.id as string) || (mailId as string),
+				},
+			});
+
+			res.render('editorMail', {
+				user: req.user,
+				page: 'Mail',
+				mail: mail,
+				responses: responses,
+				activity: activity,
+			});
+		} catch (error) {
+			next(error);
+		}
+	}
+);
+
+mailRouter.get(
+	'/editor',
+	async function (
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction
+	) {
+		try {
+			let mail: mails = {} as mails;
+			let responses: responses = {} as responses;
+			let activity;
+			activity = await prisma.activities.findUniqueOrThrow({
+				where: {
+					id: req.query.activityId as string,
+				},
+			});
 
 			res.render('editorMail', {
 				user: req.user,
@@ -96,19 +105,27 @@ mailRouter.post(
 				message: req.body.message,
 				date: new Date(),
 				detailprogrammId: null,
+				activityId: null,
 			};
 			if (req.body.activityId) {
 				mailRaw.activityId = req.body.activityId;
+
+				const acitivity: activitiesEntry =
+					await prisma.activities.findUniqueOrThrow({
+						where: {
+							id: req.body.activityId as string,
+						},
+					});
+
+				if (acitivity.detailprogrammId) {
+					mailRaw.detailprogrammId = acitivity.detailprogrammId;
+				}
 			}
 
 			const mailEntry: mails = await prisma.mails.create({
 				data: mailRaw,
 			});
 			console.log(mailEntry);
-
-			if (typeof mailEntry.activityId != 'undefined') {
-				await updateActivity(mailEntry);
-			}
 
 			distributeMail(mailEntry);
 			res.redirect('/mail');

@@ -66,7 +66,6 @@ model responses {
 
 model activities {
   id               String @id @default(auto()) @map("_id") @db.ObjectId
-  mailId           String
   detailprogrammId String
   date             String
   name             String

@@ -29,7 +29,7 @@ activitiesRouter.get(
 	) {
 		let activity: activities = {} as activities;
 		let detailprogramm: detailprogramme = {} as detailprogramme;
-		let mail: mails = {} as mails;
+		let mails;
 		if (req.query.id != undefined) {
 			try {
 				activity = await prisma.activities.findUniqueOrThrow({
@@ -47,22 +47,20 @@ activitiesRouter.get(
 					},
 				});
 			}
-			if (activity.mailId.length) {
-				mail = await prisma.mails.findUniqueOrThrow({
-					where: {
-						id: activity.mailId as string,
-					},
-				});
-			}
+
+			mails = await prisma.mails.findMany({
+				where: {
+					activityId: activity.id as string,
+				},
+			});
 		}
 
-		console.log(detailprogramm);
 		res.render('editActivity', {
 			user: req.user,
 			page: 'Aktivität',
 			activity: activity,
 			detailprogramm: detailprogramm,
-			mail: mail,
+			mails: mails,
 		});
 	}
 );
@@ -96,7 +94,7 @@ activitiesRouter.post(
 	) => {
 		try {
 			let detailprogramm: detailprogramme = {} as detailprogramme;
-			let mail: mails = {} as mails;
+			let mails;
 			const activityEntry: activitiesEntry = req.body;
 			await prisma.activities.update({
 				data: activityEntry,
@@ -111,13 +109,11 @@ activitiesRouter.post(
 					},
 				});
 			}
-			if (activityEntry.mailId.length) {
-				mail = await prisma.mails.findUniqueOrThrow({
-					where: {
-						id: activityEntry.mailId as string,
-					},
-				});
-			}
+			mails = await prisma.mails.findMany({
+				where: {
+					activityId: req.query.id as string,
+				},
+			});
 			res.render('editActivity', {
 				user: req.user,
 				page: 'Aktivität',
@@ -127,7 +123,7 @@ activitiesRouter.post(
 					},
 				}),
 				detailprogramm: detailprogramm,
-				mail: mail,
+				mails: mails,
 			});
 		} catch (error) {
 			next(error);

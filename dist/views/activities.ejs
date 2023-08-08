@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <%- include('./partials/head'); %>
+
+</head>
+
+<body>
+
+  <%- include('./partials/nav'); %>
+
+  <div>
+    <button>
+      <a href="/activities/edit">Neue Aktivität</a>
+    </button>
+  </div>
+
+  <ul>
+    <% for(let i = 0; i < activities.length; i++) { %>
+    <li>
+      <span><%= activities[i].name %></span>
+      <span><%= activities[i].date %></span>
+      <button>
+        <a href="/activities/edit?id=<%= activities[i].id %>">Bearbeiten</a>
+      </button>
+    </li>
+    <% } %>
+  </ul>
+
+</body>
+
+</html>

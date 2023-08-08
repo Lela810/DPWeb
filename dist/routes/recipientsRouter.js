@@ -1,20 +1,31 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 import validate from 'validate.js';
 import { ObjectID } from 'bson';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import express from 'express';
 export const recipientsRouter = express.Router();
-recipientsRouter.get('/', async function (req, res) {
-    res.render('recipients', {
-        user: req.user,
-        page: 'Mail',
-        recipients: await prisma.recipients.findMany(),
+recipientsRouter.get('/', function (req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        res.render('recipients', {
+            user: req.user,
+            page: 'Mail',
+            recipients: yield prisma.recipients.findMany(),
+        });
     });
 });
-recipientsRouter.post('/', async (req, res, next) => {
+recipientsRouter.post('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         if (Object.keys(req.body).length == 0) {
-            await prisma.recipients.deleteMany();
+            yield prisma.recipients.deleteMany();
             res.render('recipients', {
                 user: req.user,
                 page: 'Mail',
@@ -50,10 +61,10 @@ recipientsRouter.post('/', async (req, res, next) => {
                 return;
             }
         }
-        const recipients = await prisma.recipients.findMany();
+        const recipients = yield prisma.recipients.findMany();
         for (let i = 0; i < recipients.length; i++) {
             if (req.body.id.find((id) => id == recipients[i].id) == undefined) {
-                await prisma.recipients.delete({
+                yield prisma.recipients.delete({
                     where: {
                         id: recipients[i].id,
                     },
@@ -65,7 +76,7 @@ recipientsRouter.post('/', async (req, res, next) => {
                 mail: req.body.mail[i],
                 name: req.body.name[i],
             };
-            await prisma.recipients.upsert({
+            yield prisma.recipients.upsert({
                 create: recipientEntry,
                 update: recipientEntry,
                 where: {
@@ -76,10 +87,10 @@ recipientsRouter.post('/', async (req, res, next) => {
         res.render('recipients', {
             user: req.user,
             page: 'Mail',
-            recipients: await prisma.recipients.findMany(),
+            recipients: yield prisma.recipients.findMany(),
         });
     }
     catch (error) {
         next(error);
     }
-});
+}));

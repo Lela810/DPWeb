@@ -9,7 +9,8 @@
 		"gulp": "npx gulp",
 		"start": "node ./dist/index.js",
 		"dev": "npx nodemon --exec ts-node-esm src/index.ts",
-		"build-prisma": "npx prisma generate"
+		"build-prisma": "npx prisma generate",
+		"mongodb-start": "mongod --port 27017 --dbpath ~/data/db --replSet rs0"
 	},
 	"repository": {
 		"type": "git",
@@ -42,7 +43,8 @@
 		"ts-node": "^10.9.1"
 	},
 	"dependencies": {
-		"@pdfme/generator": "^1.0.17",
+		"@pdfme/common": "^2.0.2",
+		"@pdfme/generator": "^1.2.6",
 		"@pdfme/ui": "^1.0.17",
 		"@prisma/client": "^4.7.1",
 		"@types/jest": "^29.2.4",

@@ -5,3 +5,4 @@ export { inviteRouter } from './inviteRouter.js';
 export { mailRouter } from './mailRouter.js';
 export { indexRouter } from './indexRouter.js';
 export { recipientsRouter } from './recipientsRouter.js';
+export { activitiesRouter } from './activitiesRouter.js';

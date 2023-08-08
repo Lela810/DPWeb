@@ -1,6 +1,4 @@
 export class HttpError extends Error {
-    code;
-    msg;
     get message() {
         return this.msg;
     }

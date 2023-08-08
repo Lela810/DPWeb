@@ -12,7 +12,7 @@
 
   <%- include('./partials/nav'); %>
 
-  <form id="dpForm" action="<% if(Object.keys(detailprogramm) > 0) { %>/detailprogramme/edit?id=<%= detailprogramm.id %><% } else { %>/detailprogramme/create<% } %> " method="POST">
+  <form id="dpForm" action="<% if(Object.keys(detailprogramm).length > 0) { %>/detailprogramme/edit?id=<%= detailprogramm.id %><% } else { %>/detailprogramme/create<% } %> " method="POST">
     <label for="date">Datum</label>
     <input type="date" name="date" required value="<%= detailprogramm.date %>">
     <label for="startTime">Startzeit</label>
@@ -43,7 +43,11 @@
     <label for="anschlagAbmeldenBis">Anschlag Abmelden bis</label>
     <input type="date" name="anschlagAbmeldenBis" value="<%= detailprogramm.anschlagAbmeldenBis %>">
     <label for="anschlagAbmeldenMail">Anschlag Abmelden Mail</label>
-    <input type="date" name="anschlagAbmeldenMail" value="<%= detailprogramm.anschlagAbmeldenMail %>">
+    <input type="text" name="anschlagAbmeldenMail" value="<%= detailprogramm.anschlagAbmeldenMail %>">
+
+    <% if(typeof activity != "undefined") { %>
+    <input type="activityId" name="activityId" value="<%= activity.id %>" hidden>
+    <% } %>
 
     <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="save" onclick="confirmSave()">Speichern</button>
   </form>
