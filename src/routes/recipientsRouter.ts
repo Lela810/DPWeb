@@ -106,7 +106,7 @@ recipientsRouter.post(
 				await prisma.recipients.deleteMany({ where: { synced: false } });
 				await renderRecipients(
 					res,
-					await prisma.recipients.findMany({ where: { synced: !true } }),
+					await prisma.recipients.findMany({ where: { synced: false } }),
 					req
 				);
 				return;
@@ -138,7 +138,9 @@ recipientsRouter.post(
 				}
 			}
 
-			const recipients = await prisma.recipients.findMany();
+			const recipients = await prisma.recipients.findMany({
+				where: { synced: false },
+			});
 			for (let i = 0; i < recipients.length; i++) {
 				if (
 					req.body.id.find((id: any) => id == recipients[i].id) == undefined
@@ -168,7 +170,7 @@ recipientsRouter.post(
 
 			await renderRecipients(
 				res,
-				await prisma.recipients.findMany({ where: { synced: !true } }),
+				await prisma.recipients.findMany({ where: { synced: false } }),
 				req
 			);
 		} catch (error) {
