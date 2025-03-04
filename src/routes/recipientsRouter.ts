@@ -37,7 +37,7 @@ recipientsRouter.post(
 			let test = 0;
 			for (let i = 0; i < MiDataData.people.length; i++) {
 				const person: MiDataPerson = MiDataData.people[i];
-				if (!person.links) {
+				if (!person.links?.roles) {
 					console.log(person.first_name);
 					console.log(test);
 					test++;
