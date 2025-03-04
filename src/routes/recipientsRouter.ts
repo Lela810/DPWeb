@@ -14,6 +14,7 @@ recipientsRouter.get(
 			user: req.user,
 			page: 'Mail',
 			recipients: await prisma.recipients.findMany(),
+			syncedRecipients: [],
 		});
 	}
 );
@@ -33,6 +34,7 @@ recipientsRouter.post(
 				user: req.user,
 				page: 'Mail',
 				recipients: await prisma.recipients.findMany(),
+				syncedRecipients: [],
 			});
 		} catch (error) {
 			next(error);
@@ -54,6 +56,7 @@ recipientsRouter.post(
 					user: req.user,
 					page: 'Mail',
 					recipients: [],
+					syncedRecipients: [],
 				});
 				return;
 			}
@@ -83,6 +86,7 @@ recipientsRouter.post(
 						user: req.user,
 						page: 'Mail',
 						recipients: recipients,
+						syncedRecipients: [],
 						error: 'Invalid email address',
 					});
 					return;
@@ -121,6 +125,7 @@ recipientsRouter.post(
 				user: req.user,
 				page: 'Mail',
 				recipients: await prisma.recipients.findMany(),
+				syncedRecipients: [],
 			});
 		} catch (error) {
 			next(error);

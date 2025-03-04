@@ -36,11 +36,11 @@
       <% } %>
   </form>
   <ul>
-    <% if(Array.isArray(syncedUsers)) { 
-    for(let i = 0; i < syncedUsers.length; i++) { %>
+    <% if(Array.isArray(syncedRecipients)) { 
+    for(let i = 0; i<syncedRecipients.length; i++) { %>
     <li>
-      <span><%= syncedUsers[i].mail %></span>
-      <span><%= syncedUsers[i].name %></span>
+      <span><%= syncedRecipients[i].mail %></span>
+      <span><%= syncedRecipients[i].name %></span>
     </li>
     <% }} %>
   </ul>
