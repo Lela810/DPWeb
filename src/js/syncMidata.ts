@@ -14,29 +14,31 @@ export async function filterPeopleWithoutRoles(
 	return peopleWithoutRoles;
 }
 
-function fetchPersonDetails(url: string): any {
-	https
-		.get(url, (res) => {
-			res.setEncoding('utf8');
-			let rawData = '';
-			res.on('data', (chunk) => {
-				rawData += chunk;
+async function fetchPersonDetails(url: string): Promise<any> {
+	return new Promise((resolve, reject) => {
+		https
+			.get(url, (res) => {
+				res.setEncoding('utf8');
+				let rawData = '';
+				res.on('data', (chunk) => {
+					rawData += chunk;
+				});
+				res.on('end', () => {
+					try {
+						const parsedPerson = JSON.parse(rawData);
+						resolve(parsedPerson);
+					} catch (error) {
+						reject(error);
+					}
+				});
+			})
+			.on('error', (e) => {
+				reject(e);
 			});
-			res.on('end', () => {
-				try {
-					const parsedPerson = JSON.parse(rawData);
-					return parsedPerson;
-				} catch (error) {
-					return error;
-				}
-			});
-		})
-		.on('error', (e) => {
-			return e;
-		});
+	});
 }
 
-export function downloadMidataRecipients(): Promise<MiData> {
+export async function downloadMidataRecipients(): Promise<MiData> {
 	return new Promise((resolve, reject) => {
 		const options = {
 			hostname: 'db.scout.ch',
@@ -53,7 +55,7 @@ export function downloadMidataRecipients(): Promise<MiData> {
 				res.on('data', (chunk) => {
 					rawData += chunk;
 				});
-				res.on('end', () => {
+				res.on('end', async () => {
 					try {
 						let parsedData: MiData = JSON.parse(rawData);
 						const peopleWithMissingEmails = parsedData.people.filter(
@@ -61,8 +63,8 @@ export function downloadMidataRecipients(): Promise<MiData> {
 						);
 
 						if (peopleWithMissingEmails.length > 0) {
-							peopleWithMissingEmails.map((person) => {
-								const personDetails = fetchPersonDetails(person.href);
+							await peopleWithMissingEmails.map(async (person) => {
+								const personDetails = await fetchPersonDetails(person.href);
 								console.log(personDetails);
 								person.email = personDetails.linked.additional_emails[0].email;
 							});
