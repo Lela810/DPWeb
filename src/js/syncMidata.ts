@@ -16,8 +16,15 @@ export async function filterPeopleWithoutRoles(
 
 async function fetchPersonDetails(url: string): Promise<any> {
 	return new Promise((resolve, reject) => {
+		const options = {
+			url: url,
+			headers: {
+				'X-TOKEN': process.env.MIDATA_API_TOKEN,
+			},
+		};
+
 		https
-			.get(url, (res) => {
+			.get(options, (res) => {
 				res.setEncoding('utf8');
 				let rawData = '';
 				res.on('data', (chunk) => {
