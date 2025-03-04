@@ -74,11 +74,10 @@ export async function downloadMidataRecipients(): Promise<MiData> {
 						if (peopleWithMissingEmails.length > 0) {
 							await peopleWithMissingEmails.map(async (person) => {
 								const personDetails = await fetchPersonDetails(person.id);
-								console.log(personDetails);
+								console.log(personDetails.linked.additional_emails[0].email);
 								person.email = personDetails.linked.additional_emails[0].email;
 							});
 						}
-						console.log(peopleWithMissingEmails);
 						resolve(parsedData);
 					} catch (error) {
 						reject(error);
