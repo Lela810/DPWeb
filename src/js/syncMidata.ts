@@ -1,4 +1,5 @@
 import https from 'node:https';
+import { MiDataPerson } from '../types/MiDataPerson';
 
 export function downloadMidataRecipients() {
 	let parsedData;
@@ -20,7 +21,7 @@ export function downloadMidataRecipients() {
 			});
 			res.on('end', () => {
 				parsedData = JSON.parse(rawData);
-				console.log(parsedData);
+				//console.log(parsedData);
 			});
 		})
 		.on('error', (e) => {

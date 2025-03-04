@@ -1,4 +1,4 @@
-interface MiDataPerson {
+export interface MiDataPerson {
 	id: string;
 	type: 'people';
 	href: string;
