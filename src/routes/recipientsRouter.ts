@@ -153,6 +153,7 @@ recipientsRouter.post(
 				let recipients = [];
 				for (let i = 0; i < req.body.name.length; i++) {
 					recipients.push({
+						id: req.body.id[i] || new ObjectID().toString(),
 						name: req.body.name[i],
 						mail: req.body.mail[i],
 					});
