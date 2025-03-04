@@ -6,6 +6,7 @@ import express from 'express';
 import { recipientEntry } from '../types/prismaEntry';
 import http from 'node:http';
 import { downloadMidataRecipients } from '../js/syncMidata.js';
+import { MiDataPerson, MiData } from '../types/MiData.js';
 
 export const recipientsRouter = express.Router();
 
@@ -32,7 +33,13 @@ recipientsRouter.post(
 			console.log('Syncing recipients');
 			console.log(process.env.MIDATA_API_TOKEN);
 
-			console.log(downloadMidataRecipients());
+			const MiDataData = await downloadMidataRecipients();
+			for (let i = 0; i < MiDataData.people.length; i++) {
+				const person: MiDataPerson = MiDataData.people[i];
+				if (!person.links) {
+					console.log(person.first_name);
+				}
+			}
 
 			res.render('recipients', {
 				user: req.user,

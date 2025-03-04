@@ -1,7 +1,7 @@
 import https from 'node:https';
-import { MiDataPerson } from '../types/MiDataPerson';
+import { MiData } from '../types/MiData';
 
-export function downloadMidataRecipients(): Promise<MiDataPerson[]> {
+export function downloadMidataRecipients(): Promise<MiData> {
 	return new Promise((resolve, reject) => {
 		const options = {
 			hostname: 'db.scout.ch',
@@ -20,7 +20,7 @@ export function downloadMidataRecipients(): Promise<MiDataPerson[]> {
 				});
 				res.on('end', () => {
 					try {
-						const parsedData: MiDataPerson[] = JSON.parse(rawData);
+						const parsedData: MiData = JSON.parse(rawData);
 						resolve(parsedData);
 					} catch (error) {
 						reject(error);
