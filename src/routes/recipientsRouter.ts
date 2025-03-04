@@ -58,39 +58,29 @@ recipientsRouter.post(
 				where: { synced: true },
 			});
 
+			// Create a map with combined key (name+email) for faster lookup
 			const dbRecipientsMap = new Map(
-				dbRecipients.map((recipient) => [recipient.mail, recipient])
+				dbRecipients.map((recipient) => [
+					`${recipient.name}|${recipient.mail}`,
+					recipient,
+				])
 			);
 
+			// Process each person from MiData
 			for (const person of Teilnehmer) {
 				if (!person.email) continue;
 
 				const fullName = person.first_name + ' ' + person.last_name;
-				let existingRecipient = dbRecipientsMap.get(fullName);
-				if (!existingRecipient) {
-					existingRecipient = dbRecipientsMap.get(person.email);
-				}
+				const compositeKey = `${fullName}|${person.email}`;
+
+				const existingRecipient = dbRecipientsMap.get(compositeKey);
 
 				if (existingRecipient) {
-					// Email already exists in db
-					dbRecipientsMap.delete(person.email);
-
-					// If name is different, create a new entry with the same email
-					if (existingRecipient.name !== fullName) {
-						console.log(
-							`${existingRecipient.name} ${fullName} (${person.email})`
-						);
-						await prisma.recipients.create({
-							data: {
-								name: fullName,
-								mail: person.email,
-								synced: true,
-							},
-						});
-					}
+					// Person exists in DB, remove from map to mark as processed
+					dbRecipientsMap.delete(compositeKey);
 				} else {
-					// New email, create recipient
-					console.log('Created recipient:', person.email);
+					// New person, create recipient
+					console.log(`Created recipient: ${fullName} (${person.email})`);
 					await prisma.recipients.create({
 						data: {
 							name: fullName,
@@ -101,7 +91,11 @@ recipientsRouter.post(
 				}
 			}
 
-			for (const remainingRecipient of dbRecipientsMap.values()) {
+			// Delete recipients that aren't in MiData anymore
+			for (const [_, remainingRecipient] of dbRecipientsMap.entries()) {
+				console.log(
+					`Deleting recipient: ${remainingRecipient.name} (${remainingRecipient.mail})`
+				);
 				await prisma.recipients.delete({
 					where: { id: remainingRecipient.id },
 				});
