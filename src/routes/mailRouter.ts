@@ -7,7 +7,6 @@ import {
 	detailprogrammEntry,
 	mailEntry,
 } from '../types/prismaEntry.js';
-import MailMessage from 'nodemailer/lib/mailer/mail-message.js';
 
 export const mailRouter = express.Router();
 

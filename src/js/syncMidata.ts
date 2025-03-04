@@ -1,7 +1,5 @@
 import https from 'node:https';
 import { MiData, MiDataPerson } from '../types/MiData';
-import { recipientEntry } from '../types/prismaEntry';
-import path from 'node:path';
 
 export async function filterPeopleWithoutRoles(
 	MiDataData: MiData

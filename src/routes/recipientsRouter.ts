@@ -52,7 +52,10 @@ recipientsRouter.post(
 				if (existingRecipient) {
 					await prisma.recipients.update({
 						where: { id: existingRecipient.id },
-						data: { name: person.first_name + ' ' + person.last_name },
+						data: {
+							name: person.first_name + ' ' + person.last_name,
+							mail: person.email,
+						},
 					});
 					dbRecipientsMap.delete(person.email);
 				} else {
