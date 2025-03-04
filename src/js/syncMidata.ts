@@ -1,6 +1,18 @@
 import https from 'node:https';
 import { MiData } from '../types/MiData';
 
+async function filterPeopleWithoutRoles(
+	miData: MiData
+): Promise<MiDataPerson[]> {
+	// const miDataData = await downloadMidataRecipients();
+	const peopleWithoutRoles: MiDataPerson[] = miData.people.filter((person) => {
+		// Check if links exists and if it has the key roles.
+		return !(person.links && person.links.roles);
+	});
+
+	return peopleWithoutRoles;
+}
+
 export function downloadMidataRecipients(): Promise<MiData> {
 	return new Promise((resolve, reject) => {
 		const options = {
