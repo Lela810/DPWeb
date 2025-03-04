@@ -169,8 +169,7 @@ recipientsRouter.post(
 			await renderRecipients(
 				res,
 				await prisma.recipients.findMany({ where: { synced: !true } }),
-				req,
-				''
+				req
 			);
 		} catch (error) {
 			next(error);
