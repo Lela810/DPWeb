@@ -64,6 +64,7 @@ recipientsRouter.post(
 
 			for (const person of Teilnehmer) {
 				const existingRecipient = dbRecipientsMap.get(person.email);
+				console.log(existingRecipient);
 				if (existingRecipient) {
 					dbRecipientsMap.delete(person.email);
 				} else {
