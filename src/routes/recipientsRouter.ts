@@ -103,7 +103,7 @@ recipientsRouter.post(
 	) => {
 		try {
 			if (Object.keys(req.body).length == 0) {
-				await prisma.recipients.deleteMany({ where: { synced: !true } });
+				await prisma.recipients.deleteMany({ where: { synced: false } });
 				await renderRecipients(
 					res,
 					await prisma.recipients.findMany({ where: { synced: !true } }),
