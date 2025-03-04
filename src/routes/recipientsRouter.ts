@@ -65,8 +65,8 @@ recipientsRouter.post(
 			for (const person of Teilnehmer) {
 				if (!person.email) continue;
 
-				const existingRecipient = dbRecipientsMap.get(person.email);
 				const fullName = person.first_name + ' ' + person.last_name;
+				const existingRecipient = dbRecipientsMap.get(fullName);
 
 				if (existingRecipient) {
 					// Email already exists in db
