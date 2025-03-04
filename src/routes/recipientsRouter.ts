@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 import express from 'express';
 import { recipientEntry } from '../types/prismaEntry';
 import http from 'node:http';
-import { downloadMidataRecipients } from '../js/syncMidata.js';
+import {
+	downloadMidataRecipients,
+	filterPeopleWithoutRoles,
+} from '../js/syncMidata.js';
 import { MiDataPerson, MiData } from '../types/MiData.js';
 
 export const recipientsRouter = express.Router();
@@ -34,31 +37,9 @@ recipientsRouter.post(
 			console.log(process.env.MIDATA_API_TOKEN);
 
 			const MiDataData = await downloadMidataRecipients();
-			let test = 0;
+			const Teilnehmer = await filterPeopleWithoutRoles(MiDataData);
 
-			async function filterPeopleWithoutRoles(
-				miData: MiData
-			): Promise<MiDataPerson[]> {
-				// const miDataData = await downloadMidataRecipients();
-				const peopleWithoutRoles: MiDataPerson[] = miData.people.filter(
-					(person) => {
-						// Check if links exists and if it has the key roles.
-						return !(person.links && person.links.roles);
-					}
-				);
-
-				return peopleWithoutRoles;
-			}
-
-			return peopleWithoutRoles;
-			for (let i = 0; i < MiDataData.people.length; i++) {
-				const person: MiDataPerson = MiDataData.people[i];
-				if (!person.links?.roles) {
-					console.log(person.first_name);
-					console.log(test);
-					test++;
-				}
-			}
+			console.log(Teilnehmer);
 
 			res.render('recipients', {
 				user: req.user,
