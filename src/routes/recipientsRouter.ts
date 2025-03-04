@@ -4,7 +4,8 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import express from 'express';
 import { recipientEntry } from '../types/prismaEntry';
-const request = require('request');
+import http from 'node:http';
+import { downloadMidataRecipients } from '../js/syncMidata.js';
 
 export const recipientsRouter = express.Router();
 
@@ -30,6 +31,8 @@ recipientsRouter.post(
 		try {
 			console.log('Syncing recipients');
 			console.log(process.env.MIDATA_API_TOKEN);
+
+			console.log(downloadMidataRecipients());
 
 			res.render('recipients', {
 				user: req.user,
