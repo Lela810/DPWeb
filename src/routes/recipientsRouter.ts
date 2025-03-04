@@ -13,19 +13,31 @@ import { MiDataPerson, MiData } from '../types/MiData.js';
 
 export const recipientsRouter = express.Router();
 
+async function renderRecipients(
+	res: express.Response,
+	recipients: any,
+	req: express.Request,
+	error?: any
+) {
+	res.render('recipients', {
+		user: req.user,
+		page: 'Mail',
+		recipients: recipients,
+		syncedRecipients: await prisma.recipients.findMany({
+			where: { synced: true },
+		}),
+		error: error,
+	});
+}
+
 recipientsRouter.get(
 	'/',
 	async function (req: express.Request, res: express.Response) {
-		res.render('recipients', {
-			user: req.user,
-			page: 'Mail',
-			recipients: await prisma.recipients.findMany({
-				where: { synced: !true },
-			}),
-			syncedRecipients: await prisma.recipients.findMany({
-				where: { synced: true },
-			}),
-		});
+		await renderRecipients(
+			res,
+			await prisma.recipients.findMany({ where: { synced: !true } }),
+			req
+		);
 	}
 );
 
@@ -71,16 +83,11 @@ recipientsRouter.post(
 				});
 			}
 
-			res.render('recipients', {
-				user: req.user,
-				page: 'Mail',
-				recipients: await prisma.recipients.findMany({
-					where: { synced: !true },
-				}),
-				syncedRecipients: await prisma.recipients.findMany({
-					where: { synced: true },
-				}),
-			});
+			await renderRecipients(
+				res,
+				await prisma.recipients.findMany({ where: { synced: !true } }),
+				req
+			);
 		} catch (error) {
 			next(error);
 		}
@@ -97,16 +104,11 @@ recipientsRouter.post(
 		try {
 			if (Object.keys(req.body).length == 0) {
 				await prisma.recipients.deleteMany({ where: { synced: !true } });
-				res.render('recipients', {
-					user: req.user,
-					page: 'Mail',
-					recipients: await prisma.recipients.findMany({
-						where: { synced: !true },
-					}),
-					syncedRecipients: await prisma.recipients.findMany({
-						where: { synced: true },
-					}),
-				});
+				await renderRecipients(
+					res,
+					await prisma.recipients.findMany({ where: { synced: !true } }),
+					req
+				);
 				return;
 			}
 			if (!Array.isArray(req.body.name)) {
