@@ -19,8 +19,12 @@ recipientsRouter.get(
 		res.render('recipients', {
 			user: req.user,
 			page: 'Mail',
-			recipients: await prisma.recipients.findMany(),
-			syncedRecipients: [],
+			recipients: await prisma.recipients.findMany({
+				where: { synced: false || undefined },
+			}),
+			syncedRecipients: await prisma.recipients.findMany({
+				where: { synced: true },
+			}),
 		});
 	}
 );
@@ -34,7 +38,6 @@ recipientsRouter.post(
 	) => {
 		try {
 			console.log('Syncing recipients');
-			console.log(process.env.MIDATA_API_TOKEN);
 
 			const MiDataData = await downloadMidataRecipients();
 			const Teilnehmer = await filterPeopleWithoutRoles(MiDataData);
@@ -50,13 +53,6 @@ recipientsRouter.post(
 			for (const person of Teilnehmer) {
 				const existingRecipient = dbRecipientsMap.get(person.email);
 				if (existingRecipient) {
-					await prisma.recipients.update({
-						where: { id: existingRecipient.id },
-						data: {
-							name: person.first_name + ' ' + person.last_name,
-							mail: person.email,
-						},
-					});
 					dbRecipientsMap.delete(person.email);
 				} else {
 					await prisma.recipients.create({
@@ -78,8 +74,12 @@ recipientsRouter.post(
 			res.render('recipients', {
 				user: req.user,
 				page: 'Mail',
-				recipients: await prisma.recipients.findMany(),
-				syncedRecipients: [],
+				recipients: await prisma.recipients.findMany({
+					where: { synced: false || undefined },
+				}),
+				syncedRecipients: await prisma.recipients.findMany({
+					where: { synced: true },
+				}),
 			});
 		} catch (error) {
 			next(error);
