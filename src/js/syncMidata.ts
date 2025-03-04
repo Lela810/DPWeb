@@ -2,9 +2,17 @@ import https from 'node:https';
 
 export function downloadMidataRecipients() {
 	let parsedData;
+
+	const options = {
+		hostname: 'db.scout.ch',
+		path: '/groups/6513/people.json',
+		headers: {
+			'X-TOKEN': process.env.MIDATA_API_TOKEN,
+		},
+	};
+
 	https
-		.get('https://db.scout.ch/groups/6513/people.json', (res) => {
-			res.headers['X-TOKEN'] = process.env.MIDATA_API_TOKEN;
+		.get(options, (res) => {
 			res.setEncoding('utf8');
 			let rawData = '';
 			res.on('data', (chunk) => {
