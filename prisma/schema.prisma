@@ -50,9 +50,10 @@ model mails {
 }
 
 model recipients {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  mail String
-  name String
+  id     String   @id @default(auto()) @map("_id") @db.ObjectId
+  mail   String
+  name   String
+  synced Boolean?
 
   @@unique([mail, name])
 }
