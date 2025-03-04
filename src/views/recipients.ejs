@@ -12,7 +12,9 @@
 
   <%- include('./partials/nav'); %>
 
-
+  <form id="recipientsForm" action="/recipients/sync" method="POST">
+    <button class=" border-2 rounded-full py-2 px-4 " type="submit" id="sync" onclick="confirmSync()">Sync</button>
+  </form>
   <form id="recipientsForm" action="/recipients" method="POST">
     <button class=" border-2 rounded-full py-2 px-4 " type="button" onclick="addElement(['input', 'input'], ['mail', 'name'], ['mail', 'text'], ['true', 'true'])">+</button>
     <label for="ablauf" id="input">Empfänger
