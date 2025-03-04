@@ -1,4 +1,4 @@
-import https from 'node:http';
+import https from 'node:https';
 
 export function downloadMidataRecipients() {
 	let parsedData;
