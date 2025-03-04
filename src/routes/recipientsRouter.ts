@@ -20,7 +20,7 @@ recipientsRouter.get(
 			user: req.user,
 			page: 'Mail',
 			recipients: await prisma.recipients.findMany({
-				where: { synced: false || undefined },
+				where: { synced: !true },
 			}),
 			syncedRecipients: await prisma.recipients.findMany({
 				where: { synced: true },
