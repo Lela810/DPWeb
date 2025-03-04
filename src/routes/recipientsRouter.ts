@@ -34,10 +34,13 @@ recipientsRouter.post(
 			console.log(process.env.MIDATA_API_TOKEN);
 
 			const MiDataData = await downloadMidataRecipients();
+			let test = 0;
 			for (let i = 0; i < MiDataData.people.length; i++) {
 				const person: MiDataPerson = MiDataData.people[i];
 				if (!person.links) {
 					console.log(person.first_name);
+					console.log(test);
+					test++;
 				}
 			}
 
