@@ -2,8 +2,6 @@ import https from 'node:https';
 import { MiDataPerson } from '../types/MiDataPerson';
 
 export function downloadMidataRecipients() {
-	let parsedData;
-
 	const options = {
 		hostname: 'db.scout.ch',
 		path: '/groups/6513/people.json',
@@ -20,12 +18,12 @@ export function downloadMidataRecipients() {
 				rawData += chunk;
 			});
 			res.on('end', () => {
-				parsedData = JSON.parse(rawData);
+				const parsedData: MiDataPerson = JSON.parse(rawData);
+				return parsedData;
 				//console.log(parsedData);
 			});
 		})
 		.on('error', (e) => {
 			console.error(`Got error: ${e.message}`);
 		});
-	return parsedData;
 }
