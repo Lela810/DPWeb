@@ -139,58 +139,62 @@ recipientsRouter.post(
 				req.body.id = [req.body.id];
 			}
 
+			let entryError = false;
 			for (let i = 0; i < req.body.name.length; i++) {
 				if (
 					validate({ mail: req.body.mail[i] }, { mail: { email: true } }) !=
 					undefined
 				) {
-					let recipients = [];
-					for (let i = 0; i < req.body.name.length; i++) {
-						recipients.push({
-							name: req.body.name[i],
-							mail: req.body.mail[i],
-						});
-					}
-					await renderRecipients(res, recipients, req, 'Invalid email address');
-					continue;
+					entryError = true;
+					break;
 				}
 			}
+			if (entryError) {
+				let recipients = [];
+				for (let i = 0; i < req.body.name.length; i++) {
+					recipients.push({
+						name: req.body.name[i],
+						mail: req.body.mail[i],
+					});
+				}
+				await renderRecipients(res, recipients, req, 'Invalid email address');
+			} else {
+				const recipients = await prisma.recipients.findMany({
+					where: { synced: false },
+				});
+				for (let i = 0; i < recipients.length; i++) {
+					if (
+						req.body.id.find((id: any) => id == recipients[i].id) == undefined
+					) {
+						await prisma.recipients.delete({
+							where: {
+								id: recipients[i].id,
+							},
+						});
+					}
+				}
 
-			const recipients = await prisma.recipients.findMany({
-				where: { synced: false },
-			});
-			for (let i = 0; i < recipients.length; i++) {
-				if (
-					req.body.id.find((id: any) => id == recipients[i].id) == undefined
-				) {
-					await prisma.recipients.delete({
+				for (let i = 0; i < req.body.name.length; i++) {
+					const recipientEntry: recipientEntry = {
+						mail: req.body.mail[i],
+						name: req.body.name[i],
+						synced: false,
+					};
+					await prisma.recipients.upsert({
+						create: recipientEntry,
+						update: recipientEntry,
 						where: {
-							id: recipients[i].id,
+							id: req.body.id[i] || new ObjectID().toString(),
 						},
 					});
 				}
-			}
 
-			for (let i = 0; i < req.body.name.length; i++) {
-				const recipientEntry: recipientEntry = {
-					mail: req.body.mail[i],
-					name: req.body.name[i],
-					synced: false,
-				};
-				await prisma.recipients.upsert({
-					create: recipientEntry,
-					update: recipientEntry,
-					where: {
-						id: req.body.id[i] || new ObjectID().toString(),
-					},
-				});
+				await renderRecipients(
+					res,
+					await prisma.recipients.findMany({ where: { synced: false } }),
+					req
+				);
 			}
-
-			await renderRecipients(
-				res,
-				await prisma.recipients.findMany({ where: { synced: false } }),
-				req
-			);
 		} catch (error) {
 			next(error);
 		}
