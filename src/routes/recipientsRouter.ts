@@ -19,6 +19,25 @@ recipientsRouter.get(
 );
 
 recipientsRouter.post(
+	'/sync',
+	async (
+		req: express.Request,
+		res: express.Response,
+		next: express.NextFunction
+	) => {
+		try {
+			res.render('recipients', {
+				user: req.user,
+				page: 'Mail',
+				recipients: await prisma.recipients.findMany(),
+			});
+		} catch (error) {
+			next(error);
+		}
+	}
+);
+
+recipientsRouter.post(
 	'/',
 	async (
 		req: express.Request,
@@ -84,6 +103,7 @@ recipientsRouter.post(
 				const recipientEntry: recipientEntry = {
 					mail: req.body.mail[i],
 					name: req.body.name[i],
+					synced: false,
 				};
 				await prisma.recipients.upsert({
 					create: recipientEntry,

@@ -36,12 +36,13 @@
       <% } %>
   </form>
   <ul>
-    <% for(let i = 0; i < syncedUsers.length; i++) { %>
+    <% if(Array.isArray(syncedUsers)) { 
+    for(let i = 0; i < syncedUsers.length; i++) { %>
     <li>
       <span><%= syncedUsers[i].mail %></span>
       <span><%= syncedUsers[i].name %></span>
     </li>
-    <% } %>
+    <% }} %>
   </ul>
 
 </body>
