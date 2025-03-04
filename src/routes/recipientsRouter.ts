@@ -39,7 +39,38 @@ recipientsRouter.post(
 			const MiDataData = await downloadMidataRecipients();
 			const Teilnehmer = await filterPeopleWithoutRoles(MiDataData);
 
-			console.log(Teilnehmer);
+			const dbRecipients = await prisma.recipients.findMany({
+				where: { synced: true },
+			});
+
+			const dbRecipientsMap = new Map(
+				dbRecipients.map((recipient) => [recipient.mail, recipient])
+			);
+
+			for (const person of Teilnehmer) {
+				const existingRecipient = dbRecipientsMap.get(person.email);
+				if (existingRecipient) {
+					await prisma.recipients.update({
+						where: { id: existingRecipient.id },
+						data: { name: person.first_name + ' ' + person.last_name },
+					});
+					dbRecipientsMap.delete(person.email);
+				} else {
+					await prisma.recipients.create({
+						data: {
+							name: person.first_name + ' ' + person.last_name,
+							mail: person.email,
+							synced: true,
+						},
+					});
+				}
+			}
+
+			for (const remainingRecipient of dbRecipientsMap.values()) {
+				await prisma.recipients.delete({
+					where: { id: remainingRecipient.id },
+				});
+			}
 
 			res.render('recipients', {
 				user: req.user,

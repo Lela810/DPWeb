@@ -9,7 +9,7 @@ export interface MiDataPerson {
 	nickname: string | null;
 	company_name: string | null;
 	company: boolean;
-	email: string | null;
+	email: string;
 	address: string | null;
 	zip_code: string | null;
 	town: string | null;
