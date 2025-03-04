@@ -63,15 +63,34 @@ recipientsRouter.post(
 			);
 
 			for (const person of Teilnehmer) {
+				if (!person.email) continue;
+
 				const existingRecipient = dbRecipientsMap.get(person.email);
-				console.log(existingRecipient);
+				const fullName = person.first_name + ' ' + person.last_name;
+
 				if (existingRecipient) {
+					// Email already exists in db
 					dbRecipientsMap.delete(person.email);
+
+					// If name is different, create a new entry with the same email
+					if (existingRecipient.name !== fullName) {
+						console.log(
+							`${existingRecipient.name} ${fullName} (${person.email})`
+						);
+						await prisma.recipients.create({
+							data: {
+								name: fullName,
+								mail: person.email,
+								synced: true,
+							},
+						});
+					}
 				} else {
-					console.log('Creating recipient', person.email);
+					// New email, create recipient
+					console.log('Created recipient:', person.email);
 					await prisma.recipients.create({
 						data: {
-							name: person.first_name + ' ' + person.last_name,
+							name: fullName,
 							mail: person.email,
 							synced: true,
 						},
