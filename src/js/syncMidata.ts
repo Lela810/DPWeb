@@ -15,27 +15,25 @@ export async function filterPeopleWithoutRoles(
 }
 
 function fetchPersonDetails(url: string): any {
-	return new Promise((resolve, reject) => {
-		https
-			.get(url, (res) => {
-				res.setEncoding('utf8');
-				let rawData = '';
-				res.on('data', (chunk) => {
-					rawData += chunk;
-				});
-				res.on('end', () => {
-					try {
-						const parsedPerson = JSON.parse(rawData);
-						resolve(parsedPerson);
-					} catch (error) {
-						reject(error);
-					}
-				});
-			})
-			.on('error', (e) => {
-				reject(e);
+	https
+		.get(url, (res) => {
+			res.setEncoding('utf8');
+			let rawData = '';
+			res.on('data', (chunk) => {
+				rawData += chunk;
 			});
-	});
+			res.on('end', () => {
+				try {
+					const parsedPerson = JSON.parse(rawData);
+					return parsedPerson;
+				} catch (error) {
+					return error;
+				}
+			});
+		})
+		.on('error', (e) => {
+			return e;
+		});
 }
 
 export function downloadMidataRecipients(): Promise<MiData> {
@@ -65,6 +63,7 @@ export function downloadMidataRecipients(): Promise<MiData> {
 						if (peopleWithMissingEmails.length > 0) {
 							peopleWithMissingEmails.map((person) => {
 								const personDetails = fetchPersonDetails(person.href);
+								console.log(personDetails);
 								person.email = personDetails.linked.additional_emails[0].email;
 							});
 						}
