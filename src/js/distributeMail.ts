@@ -1,7 +1,6 @@
 import { sendMail } from './mail.js';
 import { mails, PrismaClient } from '@prisma/client';
 import { inviteEntry } from '../types/prismaEntry.js';
-import { generatePdf } from './pdf.js';
 const prisma = new PrismaClient();
 
 function onlyUnique(value: any, index: any, self: any) {
@@ -67,7 +66,6 @@ export async function distributeMail(mailEntry: mails) {
 		}
 	} else {
 		try {
-			await generatePdf();
 			filteredReceivers.forEach((receiver) => {
 				sendMail(
 					mailEntry.sender,

@@ -8,7 +8,7 @@
 		"build-css": "npx tailwindcss -o src/public/main.css",
 		"gulp": "npx gulp",
 		"start": "node ./dist/index.js",
-		"dev": "npx nodemon --exec ts-node-esm src/index.ts",
+		"dev": "node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts",
 		"build-prisma": "npx prisma generate",
 		"mongodb-start": "mongod --port 27017 --dbpath ~/data/db --replSet rs0"
 	},
@@ -40,12 +40,10 @@
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"nodemon": "^2.0.20",
 		"tailwindcss": "^3.2.4",
-		"ts-node": "^10.9.1"
+		"ts-node": "^10.9.2",
+		"typescript": "^5.8.2"
 	},
 	"dependencies": {
-		"@pdfme/common": "^2.0.2",
-		"@pdfme/generator": "^1.2.6",
-		"@pdfme/ui": "^1.0.17",
 		"@prisma/client": "^4.7.1",
 		"@types/jest": "^29.2.4",
 		"body-parser": "^1.20.1",
