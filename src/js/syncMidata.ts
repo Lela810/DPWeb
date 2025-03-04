@@ -1,6 +1,7 @@
 import https from 'node:https';
 import { MiData, MiDataPerson } from '../types/MiData';
 import { recipientEntry } from '../types/prismaEntry';
+import path from 'node:path';
 
 export async function filterPeopleWithoutRoles(
 	MiDataData: MiData
@@ -14,10 +15,11 @@ export async function filterPeopleWithoutRoles(
 	return peopleWithoutRoles;
 }
 
-async function fetchPersonDetails(url: string): Promise<any> {
+async function fetchPersonDetails(id: string): Promise<any> {
 	return new Promise((resolve, reject) => {
 		const options = {
-			url: url,
+			hostname: 'db.scout.ch',
+			path: '/groups/6513/people/' + id + '.json',
 			headers: {
 				'X-TOKEN': process.env.MIDATA_API_TOKEN,
 			},
@@ -71,7 +73,7 @@ export async function downloadMidataRecipients(): Promise<MiData> {
 
 						if (peopleWithMissingEmails.length > 0) {
 							await peopleWithMissingEmails.map(async (person) => {
-								const personDetails = await fetchPersonDetails(person.href);
+								const personDetails = await fetchPersonDetails(person.id);
 								console.log(personDetails);
 								person.email = personDetails.linked.additional_emails[0].email;
 							});
