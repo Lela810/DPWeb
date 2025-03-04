@@ -66,7 +66,10 @@ recipientsRouter.post(
 				if (!person.email) continue;
 
 				const fullName = person.first_name + ' ' + person.last_name;
-				const existingRecipient = dbRecipientsMap.get(fullName);
+				let existingRecipient = dbRecipientsMap.get(fullName);
+				if (!existingRecipient) {
+					existingRecipient = dbRecipientsMap.get(person.email);
+				}
 
 				if (existingRecipient) {
 					// Email already exists in db
