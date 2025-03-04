@@ -75,7 +75,7 @@ recipientsRouter.post(
 				user: req.user,
 				page: 'Mail',
 				recipients: await prisma.recipients.findMany({
-					where: { synced: false || undefined },
+					where: { synced: !true },
 				}),
 				syncedRecipients: await prisma.recipients.findMany({
 					where: { synced: true },
@@ -96,12 +96,16 @@ recipientsRouter.post(
 	) => {
 		try {
 			if (Object.keys(req.body).length == 0) {
-				await prisma.recipients.deleteMany();
+				await prisma.recipients.deleteMany({ where: { synced: !true } });
 				res.render('recipients', {
 					user: req.user,
 					page: 'Mail',
-					recipients: [],
-					syncedRecipients: [],
+					recipients: await prisma.recipients.findMany({
+						where: { synced: !true },
+					}),
+					syncedRecipients: await prisma.recipients.findMany({
+						where: { synced: true },
+					}),
 				});
 				return;
 			}
@@ -131,7 +135,9 @@ recipientsRouter.post(
 						user: req.user,
 						page: 'Mail',
 						recipients: recipients,
-						syncedRecipients: [],
+						syncedRecipients: await prisma.recipients.findMany({
+							where: { synced: true },
+						}),
 						error: 'Invalid email address',
 					});
 					return;
