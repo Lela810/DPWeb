@@ -175,8 +175,12 @@ recipientsRouter.post(
 			res.render('recipients', {
 				user: req.user,
 				page: 'Mail',
-				recipients: await prisma.recipients.findMany(),
-				syncedRecipients: [],
+				recipients: await prisma.recipients.findMany({
+					where: { synced: !true },
+				}),
+				syncedRecipients: await prisma.recipients.findMany({
+					where: { synced: true },
+				}),
 			});
 		} catch (error) {
 			next(error);
