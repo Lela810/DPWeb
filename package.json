@@ -63,6 +63,7 @@
 		"passport-microsoft": "^1.0.0",
 		"path": "^0.12.7",
 		"prisma": "^4.7.1",
+		"request": "^2.88.2",
 		"tinymce": "^6.3.0",
 		"validate.js": "^0.13.1"
 	},

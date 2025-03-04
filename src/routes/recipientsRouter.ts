@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import express from 'express';
 import { recipientEntry } from '../types/prismaEntry';
+const request = require('request');
 
 export const recipientsRouter = express.Router();
 
