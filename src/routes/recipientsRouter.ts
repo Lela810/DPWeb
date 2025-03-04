@@ -152,7 +152,7 @@ recipientsRouter.post(
 						});
 					}
 					await renderRecipients(res, recipients, req, 'Invalid email address');
-					return;
+					continue;
 				}
 			}
 
