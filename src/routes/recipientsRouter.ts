@@ -67,6 +67,7 @@ recipientsRouter.post(
 				if (existingRecipient) {
 					dbRecipientsMap.delete(person.email);
 				} else {
+					console.log('Creating recipient', person.email);
 					await prisma.recipients.create({
 						data: {
 							name: person.first_name + ' ' + person.last_name,
