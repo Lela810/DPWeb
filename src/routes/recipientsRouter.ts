@@ -35,6 +35,22 @@ recipientsRouter.post(
 
 			const MiDataData = await downloadMidataRecipients();
 			let test = 0;
+
+			async function filterPeopleWithoutRoles(
+				miData: MiData
+			): Promise<MiDataPerson[]> {
+				// const miDataData = await downloadMidataRecipients();
+				const peopleWithoutRoles: MiDataPerson[] = miData.people.filter(
+					(person) => {
+						// Check if links exists and if it has the key roles.
+						return !(person.links && person.links.roles);
+					}
+				);
+
+				return peopleWithoutRoles;
+			}
+
+			return peopleWithoutRoles;
 			for (let i = 0; i < MiDataData.people.length; i++) {
 				const person: MiDataPerson = MiDataData.people[i];
 				if (!person.links?.roles) {
