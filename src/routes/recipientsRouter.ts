@@ -26,6 +26,9 @@ recipientsRouter.post(
 		next: express.NextFunction
 	) => {
 		try {
+			console.log('Syncing recipients');
+			console.log(process.env.MIDATA_API_TOKEN);
+
 			res.render('recipients', {
 				user: req.user,
 				page: 'Mail',
