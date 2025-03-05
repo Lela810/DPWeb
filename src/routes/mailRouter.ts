@@ -26,23 +26,31 @@ mailRouter.get(
 	) {
 		try {
 			const mailId = req.query.id as string;
+			let receivers;
 
 			const mail = await prisma.mails.findUniqueOrThrow({
 				where: {
 					id: mailId,
 				},
 			});
-			const invite = await prisma.invites.findUniqueOrThrow({
-				where: {
-					mailId: mailId,
-				},
-			});
+
+			if (mail.invite) {
+				receivers = (
+					await prisma.invites.findUniqueOrThrow({
+						where: {
+							mailId: mailId,
+						},
+					})
+				).receivers;
+			} else {
+				receivers = mail.receivers;
+			}
 
 			res.render('editorMail', {
 				user: req.user,
 				page: 'Mail',
 				mail: mail,
-				receivers: invite.receivers,
+				receivers: receivers,
 			});
 		} catch (error) {
 			next(error);
