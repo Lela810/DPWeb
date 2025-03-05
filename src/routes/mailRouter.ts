@@ -92,7 +92,9 @@ mailRouter.post(
 			const mailRaw: mailEntry = {
 				invite: inviteBool,
 				sender: req.user.emails.find((e: any) => e.type == 'work').value,
-				receivers: await prisma.recipients.findMany(),
+				receivers: (await prisma.recipients.findMany()).map(
+					({ id, synced, ...rest }) => rest
+				),
 				subject: req.body.subject,
 				message: req.body.message,
 				date: new Date(),
