@@ -1,15 +1,13 @@
 import validate from 'validate.js';
-import { Code, ObjectID } from 'bson';
+import { ObjectID } from 'bson';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import express from 'express';
 import { recipientEntry } from '../types/prismaEntry';
-import http from 'node:http';
 import {
 	downloadMidataRecipients,
 	filterPeopleWithoutRoles,
 } from '../js/syncMidata.js';
-import { MiDataPerson, MiData } from '../types/MiData.js';
 
 export const recipientsRouter = express.Router();
 
