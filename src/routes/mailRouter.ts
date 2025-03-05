@@ -34,6 +34,12 @@ mailRouter.get(
 				},
 			});
 
+			const activity = await prisma.activities.findUniqueOrThrow({
+				where: {
+					id: mail.activityId,
+				},
+			});
+
 			if (mail.invite) {
 				receivers = (
 					await prisma.invites.findUniqueOrThrow({
@@ -51,6 +57,7 @@ mailRouter.get(
 				page: 'Mail',
 				mail: mail,
 				receivers: receivers,
+				activity: activity,
 			});
 		} catch (error) {
 			next(error);
