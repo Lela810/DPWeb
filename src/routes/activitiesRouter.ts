@@ -40,7 +40,7 @@ activitiesRouter.get(
 			} catch (error) {
 				next(error);
 			}
-			if (activity.detailprogrammId.length) {
+			if (activity.detailprogrammId.length > 0) {
 				detailprogramm = await prisma.detailprogramme.findUniqueOrThrow({
 					where: {
 						id: activity.detailprogrammId as string,
