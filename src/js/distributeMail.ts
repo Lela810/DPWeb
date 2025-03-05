@@ -53,11 +53,11 @@ export async function distributeMail(mailEntry: mails) {
 				data: inviteEntry,
 			});
 
-			inviteEntry.receivers.forEach((receiver) => {
+			receiversWithIdentifiers.forEach((receiver) => {
 				const inviteLink = `http://localhost:3000/invite?id=${mailEntry.id}&identifier=${receiver.identifier}`;
 				sendMail(
 					mailEntry.sender,
-					receiver,
+					receiver.mail,
 					mailEntry.subject,
 					mailEntry.message + inviteLink
 				);
