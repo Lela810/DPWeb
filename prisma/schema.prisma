@@ -8,33 +8,35 @@ datasource db {
 }
 
 type MailsReceivers {
-  id   String @map("_id") @db.ObjectId
   mail String
   name String
 }
 
+type InviteReceivers {
+  mail       String
+  name       String
+  identifier String
+}
+
 model detailprogramme {
-  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
-  ablauf               String[]
-  date                 String
-  endtime              String
-  location             String
-  material             String
-  responsible          String
-  starttime            String
-  zeit                 String[]
-  anschlagText         String
-  anschlagMitnehmen    String
-  anschlagAbmeldenBis  String
-  anschlagAbmeldenMail String
-  activityId           String
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  ablauf      String[]
+  date        String
+  endtime     String
+  location    String
+  material    String
+  responsible String
+  starttime   String
+  zeit        String[]
+  AbmeldenBis String
+  activityId  String
 }
 
 model invites {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  identifiers String[]
-  mailId      String   @unique
-  mails       String[]
+  id        String            @id @default(auto()) @map("_id") @db.ObjectId
+  created   DateTime          @default(now()) @db.Date
+  mailId    String            @unique
+  receivers InviteReceivers[]
 }
 
 model mails {
@@ -56,13 +58,6 @@ model recipients {
   synced Boolean?
 
   @@unique([mail, name])
-}
-
-model responses {
-  id     String   @id @default(auto()) @map("_id") @db.ObjectId
-  mailId String   @unique
-  mails  String[]
-  names  String[]
 }
 
 model activities {
