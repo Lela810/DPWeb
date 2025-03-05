@@ -23,36 +23,38 @@ export async function distributeMail(mailEntry: mails) {
 	mailEntry.receivers.forEach((receiver: any) => {
 		unfilteredReceivers.push(receiver.mail);
 	});
-	const filteredReceivers = unfilteredReceivers.filter(onlyUnique);
+
+	let filteredReceivers = unfilteredReceivers.filter(onlyUnique);
 
 	if (mailEntry.invite) {
+		let receiversWithIdentifiers = filteredReceivers.map((mail) => ({
+			mail,
+			identifier: makeid(20),
+		}));
+
 		let inviteEntry: inviteEntry = {
 			mailId: mailEntry.id,
-			identifiers: [],
-			mails: [],
+			receivers: [],
 		};
-		filteredReceivers.forEach(async (receiver) => {
-			inviteEntry.identifiers.push(makeid(20));
-			inviteEntry.mails.push(receiver);
+		mailEntry.receivers.forEach((receiver: any) => {
+			const matchingReceiver = receiversWithIdentifiers.find(
+				(r) => r.mail === receiver.mail
+			);
+			if (matchingReceiver) {
+				inviteEntry.receivers.push({
+					mail: receiver.mail,
+					name: receiver.name,
+					identifier: matchingReceiver.identifier,
+				});
+			}
 		});
 		try {
 			await prisma.invites.create({
 				data: inviteEntry,
 			});
-			await prisma.responses.create({
-				data: {
-					mailId: mailEntry.id,
-					names: [],
-					mails: [],
-				},
-			});
 
-			filteredReceivers.forEach((receiver) => {
-				const inviteLink = `http://localhost:3000/invite?id=${
-					mailEntry.id
-				}&identifier=${
-					inviteEntry.identifiers[inviteEntry.mails.indexOf(receiver)]
-				}`;
+			inviteEntry.receivers.forEach((receiver) => {
+				const inviteLink = `http://localhost:3000/invite?id=${mailEntry.id}&identifier=${receiver.identifier}`;
 				sendMail(
 					mailEntry.sender,
 					receiver,
