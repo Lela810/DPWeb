@@ -10,7 +10,7 @@ namespace Logger {
 
 export const limiter = rateLimit({
 	windowMs: 1 * 60 * 1000,
-	max: 100,
+	max: 200,
 	standardHeaders: true,
 	legacyHeaders: false,
 });
