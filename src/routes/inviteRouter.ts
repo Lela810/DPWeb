@@ -48,28 +48,40 @@ inviteRouter.post(
 		next: express.NextFunction
 	) => {
 		try {
-			let responseEntry = await prisma.responses.findUniqueOrThrow({
+			const mailId = req.body.id as string;
+			const name = req.body.name as string;
+			const mail = req.body.mail as string;
+
+			const invite = await prisma.invites.findUniqueOrThrow({
 				where: {
-					mailId: req.body.id,
+					mailId: mailId,
 				},
 			});
-			if (
-				responseEntry.names.indexOf(req.body.name) !=
-					responseEntry.mails.indexOf(req.body.mail) ||
-				(responseEntry.names.indexOf(req.body.name) == -1 &&
-					responseEntry.mails.indexOf(req.body.mail) == -1)
-			) {
-				responseEntry.names.push(req.body.name);
-				responseEntry.mails.push(req.body.mail);
 
-				await prisma.responses.update({
-					where: {
-						mailId: req.body.id,
-					},
-					data: {
-						names: responseEntry.names,
-						mails: responseEntry.mails,
-					},
+			// Find the receiver index that matches the name and mail
+			let receiverIndex = -1;
+			for (let i = 0; i < invite.receivers.length; i++) {
+				if (
+					invite.receivers[i].identifier === mail &&
+					invite.receivers[i].name === name
+				) {
+					receiverIndex = i;
+					break;
+				}
+			}
+
+			if (receiverIndex !== -1) {
+				// Create a new array with updated receiver
+				const updatedReceivers = [...invite.receivers];
+				updatedReceivers[receiverIndex] = {
+					...updatedReceivers[receiverIndex],
+					rejected: true,
+				};
+
+				// Update the invite with the modified receivers array
+				await prisma.invites.update({
+					where: { mailId: mailId },
+					data: { receivers: updatedReceivers },
 				});
 			}
 
