@@ -62,14 +62,14 @@ inviteRouter.post(
 			let receiverIndex = -1;
 			for (let i = 0; i < invite.receivers.length; i++) {
 				if (
-					invite.receivers[i].identifier === mail &&
+					invite.receivers[i].mail === mail &&
 					invite.receivers[i].name === name
 				) {
 					receiverIndex = i;
 					break;
 				}
 			}
-			console.log(invite.receivers.length);
+
 			if (receiverIndex !== -1) {
 				// Create a new array with updated receiver
 				const updatedReceivers = [...invite.receivers];
