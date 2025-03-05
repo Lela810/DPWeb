@@ -40,15 +40,14 @@ model invites {
 }
 
 model mails {
-  id               String           @id @default(auto()) @map("_id") @db.ObjectId
-  date             DateTime         @default(now()) @db.Date
-  invite           Boolean
-  message          String
-  receivers        MailsReceivers[]
-  sender           String
-  subject          String
-  activityId       String?
-  detailprogrammId String?
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  date       DateTime         @default(now()) @db.Date
+  invite     Boolean
+  message    String
+  receivers  MailsReceivers[]
+  sender     String
+  subject    String
+  activityId String
 }
 
 model recipients {
