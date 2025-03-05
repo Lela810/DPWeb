@@ -10,6 +10,6 @@ type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export type detailprogrammEntry = PartialBy<detailprogramme, 'id'>;
 export type mailEntry = PartialBy<PartialBy<mails, 'id'>, 'date'>;
-export type inviteEntry = PartialBy<invites, 'id'>;
+export type inviteEntry = PartialBy<PartialBy<invites, 'id'>, 'created'>;
 export type recipientEntry = PartialBy<recipients, 'id'>;
 export type activitiesEntry = PartialBy<activities, 'id'>;
