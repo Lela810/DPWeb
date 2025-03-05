@@ -11,7 +11,7 @@ import { error } from 'node:console';
 export const activitiesRouter = express.Router();
 const prisma = new PrismaClient();
 
-async function renderActivities(
+async function renderEditActivity(
 	res: express.Response,
 	activityId: string,
 	req: express.Request
@@ -61,34 +61,16 @@ activitiesRouter.get(
 		next: express.NextFunction
 	) {
 		const activityId = req.query.id as string;
-		if (req.query.id != undefined) {
+		if (activityId != undefined) {
 			next(error);
 		} else {
-			const activity = await prisma.activities.findUniqueOrThrow({
+			await prisma.activities.findUniqueOrThrow({
 				where: {
 					id: activityId,
 				},
 			});
 
-			const detailprogramm = await prisma.detailprogramme.findUniqueOrThrow({
-				where: {
-					activityId: activityId,
-				},
-			});
-
-			const mails = await prisma.mails.findMany({
-				where: {
-					activityId: activity.id as string,
-				},
-			});
-
-			res.render('editActivity', {
-				user: req.user,
-				page: 'Aktivität',
-				activity: activity,
-				detailprogramm: detailprogramm,
-				mails: mails,
-			});
+			await renderEditActivity(res, activityId, req);
 		}
 	}
 );
@@ -100,14 +82,13 @@ activitiesRouter.post(
 		next: express.NextFunction
 	) => {
 		try {
-			const newEntry: activitiesEntry = await prisma.activities.create({
-				data: req.body,
+			const newActivityEntry = req.body as activitiesEntry;
+
+			const activity = await prisma.activities.create({
+				data: newActivityEntry,
 			});
-			res.render('editActivity', {
-				user: req.user,
-				page: 'Aktivität',
-				activity: newEntry,
-			});
+
+			await renderEditActivity(res, activity.id, req);
 		} catch (error) {
 			next(error);
 		}
@@ -124,32 +105,14 @@ activitiesRouter.post(
 			const activityId = req.query.id as string;
 			const activityEntry = req.body as activitiesEntry;
 
-			const activity = await prisma.activities.update({
+			await prisma.activities.update({
 				data: activityEntry,
 				where: {
 					id: activityId,
 				},
 			});
 
-			const detailprogramm = await prisma.detailprogramme.findUniqueOrThrow({
-				where: {
-					activityId: activityId,
-				},
-			});
-
-			const mails = await prisma.mails.findMany({
-				where: {
-					activityId: activityId,
-				},
-			});
-
-			res.render('editActivity', {
-				user: req.user,
-				page: 'Aktivität',
-				activity: activity,
-				detailprogramm: detailprogramm,
-				mails: mails,
-			});
+			await renderEditActivity(res, activityId, req);
 		} catch (error) {
 			next(error);
 		}
