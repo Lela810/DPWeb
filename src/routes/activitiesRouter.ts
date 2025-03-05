@@ -53,6 +53,7 @@ activitiesRouter.get(
 		});
 	}
 );
+
 activitiesRouter.get(
 	'/edit',
 	async function (
@@ -61,9 +62,8 @@ activitiesRouter.get(
 		next: express.NextFunction
 	) {
 		const activityId = req.query.id as string;
-		if (activityId != undefined) {
-			next(error);
-		} else {
+
+		try {
 			await prisma.activities.findUniqueOrThrow({
 				where: {
 					id: activityId,
@@ -71,6 +71,8 @@ activitiesRouter.get(
 			});
 
 			await renderEditActivity(res, activityId, req);
+		} catch (error) {
+			next(error);
 		}
 	}
 );
