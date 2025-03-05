@@ -26,7 +26,6 @@ mailRouter.get(
 	) {
 		try {
 			const mailId = req.query.id as string;
-			let activity;
 
 			const mail = await prisma.mails.findUniqueOrThrow({
 				where: {
@@ -44,7 +43,6 @@ mailRouter.get(
 				page: 'Mail',
 				mail: mail,
 				receivers: invite.receivers,
-				activity: activity,
 			});
 		} catch (error) {
 			next(error);
