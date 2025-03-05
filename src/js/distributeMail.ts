@@ -45,6 +45,7 @@ export async function distributeMail(mailEntry: mails) {
 					mail: receiver.mail,
 					name: receiver.name,
 					identifier: matchingReceiver.identifier,
+					rejected: false,
 				});
 			}
 		});

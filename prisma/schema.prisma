@@ -16,6 +16,7 @@ type InviteReceivers {
   mail       String
   name       String
   identifier String
+  rejected   Boolean
 }
 
 model detailprogramme {

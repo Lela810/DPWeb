@@ -13,31 +13,25 @@ inviteRouter.get(
 		next: express.NextFunction
 	) {
 		try {
-			const mail = await prisma.mails.findUniqueOrThrow({
-				where: {
-					id: req.query.id as string,
-				},
-			});
+			const mailId = req.query.id as string;
+			const identifier = req.query.identifier as string;
 
-			let mailReceivers = mail.receivers;
-
-			const identifier: string = req.query.identifier as string;
 			const invite = await prisma.invites.findUniqueOrThrow({
 				where: {
-					mailId: req.query.id as string,
+					mailId: mailId,
 				},
 			});
-			const mailOfIdentifier =
-				invite.mails[invite.identifiers.indexOf(identifier)];
-			const recipients = mailReceivers.filter(
-				(receiver: any) => receiver.mail === mailOfIdentifier
+
+			// Get all receivers that match the identifier's email
+			let receivers = invite.receivers.filter(
+				(receiver: any) => receiver.identifier === identifier
 			);
 
 			res.render('invite', {
 				user: req.user,
 				page: 'invite',
-				recipients: recipients,
-				id: req.query.id,
+				receivers: receivers,
+				id: mailId,
 				validate: validate,
 			});
 		} catch (error) {
