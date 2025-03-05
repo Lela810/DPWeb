@@ -41,6 +41,10 @@
     <% } %>
   </form>
 
+  <% if(typeof activity != "undefined") { %>
+  <a href="/activities/edit?id=<%= activity.id %>">Aktivität</a>
+  <% } %>
+
   <% if (Object.keys(receivers).length > 0) { %>
   <ul>
     <% for(let i = 0; i < receivers.length; i++) { %>
