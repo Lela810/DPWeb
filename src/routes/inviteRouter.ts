@@ -69,7 +69,7 @@ inviteRouter.post(
 					break;
 				}
 			}
-
+			console.log(invite.receivers.length);
 			if (receiverIndex !== -1) {
 				// Create a new array with updated receiver
 				const updatedReceivers = [...invite.receivers];
