@@ -41,12 +41,12 @@
     <% } %>
   </form>
 
-  <% if (Object.keys(responses).length > 0) { %>
+  <% if (Object.keys(receivers).length > 0) { %>
   <ul>
-    <% for(let i = 0; i < responses.names.length; i++) { %>
+    <% for(let i = 0; i < receivers.length; i++) { %>
     <li>
-      <span><%= responses.names[i] %></span>
-      <span><%= responses.mails[i] %></span>
+      <span><%= receivers[i].name %></span>
+      <span><%= receivers[i].mail %></span>
     </li>
     <% } %>
   </ul>

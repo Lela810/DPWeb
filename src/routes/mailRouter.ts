@@ -1,12 +1,8 @@
 import { distributeMail } from '../js/distributeMail.js';
-import { mails, PrismaClient, responses } from '@prisma/client';
+import { mails, PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import express from 'express';
-import {
-	activitiesEntry,
-	detailprogrammEntry,
-	mailEntry,
-} from '../types/prismaEntry.js';
+import { mailEntry } from '../types/prismaEntry.js';
 
 export const mailRouter = express.Router();
 
@@ -29,19 +25,17 @@ mailRouter.get(
 		next: express.NextFunction
 	) {
 		try {
-			let mail: mails = {} as mails;
-			let responses: responses = {} as responses;
-			let mailId = '';
+			const mailId = req.query.id as string;
 			let activity;
 
-			mail = await prisma.mails.findUniqueOrThrow({
+			const mail = await prisma.mails.findUniqueOrThrow({
 				where: {
-					id: (req.query.id as string) || (mailId as string),
+					id: mailId,
 				},
 			});
-			responses = await prisma.responses.findUniqueOrThrow({
+			const invite = await prisma.invites.findUniqueOrThrow({
 				where: {
-					mailId: (req.query.id as string) || (mailId as string),
+					mailId: mailId,
 				},
 			});
 
@@ -49,7 +43,7 @@ mailRouter.get(
 				user: req.user,
 				page: 'Mail',
 				mail: mail,
-				responses: responses,
+				receivers: invite.receivers,
 				activity: activity,
 			});
 		} catch (error) {
@@ -67,11 +61,10 @@ mailRouter.get(
 	) {
 		try {
 			let mail: mails = {} as mails;
-			let responses: responses = {} as responses;
-			let activity;
-			activity = await prisma.activities.findUniqueOrThrow({
+			const activityId = req.query.activityId as string;
+			const activity = await prisma.activities.findUniqueOrThrow({
 				where: {
-					id: req.query.activityId as string,
+					id: activityId,
 				},
 			});
 
@@ -79,7 +72,6 @@ mailRouter.get(
 				user: req.user,
 				page: 'Mail',
 				mail: mail,
-				responses: responses,
 				activity: activity,
 			});
 		} catch (error) {
@@ -103,23 +95,8 @@ mailRouter.post(
 				subject: req.body.subject,
 				message: req.body.message,
 				date: new Date(),
-				detailprogrammId: null,
-				activityId: null,
+				activityId: req.body.activityId,
 			};
-			if (req.body.activityId) {
-				mailRaw.activityId = req.body.activityId;
-
-				const acitivity: activitiesEntry =
-					await prisma.activities.findUniqueOrThrow({
-						where: {
-							id: req.body.activityId as string,
-						},
-					});
-
-				if (acitivity.detailprogrammId) {
-					mailRaw.detailprogrammId = acitivity.detailprogrammId;
-				}
-			}
 
 			const mailEntry: mails = await prisma.mails.create({
 				data: mailRaw,
