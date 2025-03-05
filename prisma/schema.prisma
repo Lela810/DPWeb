@@ -29,7 +29,7 @@ model detailprogramme {
   starttime   String
   zeit        String[]
   AbmeldenBis String
-  activityId  String
+  activityId  String   @unique
 }
 
 model invites {
@@ -61,10 +61,11 @@ model recipients {
 }
 
 model activities {
-  id               String @id @default(auto()) @map("_id") @db.ObjectId
-  detailprogrammId String
-  date             String
-  name             String
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  date String
+  name String
+
+  @@unique([date, name])
 }
 
 model sessions {
