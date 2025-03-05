@@ -73,6 +73,7 @@ mailRouter.get(
 				page: 'Mail',
 				mail: mail,
 				activity: activity,
+				receivers: await prisma.recipients.findMany(),
 			});
 		} catch (error) {
 			next(error);
