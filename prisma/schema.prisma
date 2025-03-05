@@ -60,11 +60,10 @@ model recipients {
 }
 
 model activities {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  date String
-  name String
-
-  @@unique([date, name])
+  id               String @id @default(auto()) @map("_id") @db.ObjectId
+  date             String
+  name             String
+  detailprogrammId String @unique
 }
 
 model sessions {
