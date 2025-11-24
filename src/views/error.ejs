@@ -15,6 +15,20 @@
     <%= errorcode  %>
   </h3>
 
+  <% if (message) { %>
+    <div class="mx-4 my-2 p-2 bg-red-100 rounded">
+      <strong>Message:</strong>
+      <div><%= message %></div>
+    </div>
+  <% } %>
+
+  <% if (stack) { %>
+    <div class="mx-4 my-2 p-2 bg-gray-100 rounded">
+      <strong>Stack:</strong>
+      <pre style="white-space: pre-wrap;"><%= stack %></pre>
+    </div>
+  <% } %>
+
 </body>
 
 </html>

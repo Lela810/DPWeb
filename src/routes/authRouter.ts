@@ -12,11 +12,21 @@ authRouter.get(
 
 authRouter.get(
 	'/microsoft/callback',
-	passport.authenticate('microsoft', {
-		failureRedirect: '/',
-	}),
-	function (req, res) {
-		res.redirect('/home');
+	function (req: express.Request, res: express.Response, next: express.NextFunction) {
+		passport.authenticate('microsoft', function (err: any, user: any, info: any) {
+			if (err) {
+				return next(err);
+			}
+			if (!user) {
+				return res.redirect('/');
+			}
+			req.logIn(user, function (err) {
+				if (err) {
+					return next(err);
+				}
+				return res.redirect('/home');
+			});
+		})(req, res, next);
 	}
 );
 
