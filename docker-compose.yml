@@ -12,9 +12,8 @@ services:
     depends_on:
       mongo:
         condition: service_healthy
-    # Start wrapper will wait for Mongo, run prisma generate and start the app
-    # (no command override needed; image CMD `start.sh` will run)
-    # Keep restart policy so container restarts on failure
+    # Run prisma generate at container start as a safety-net, then start the app
+    command: sh -c "npx prisma generate || true && npm run start"
 
   mongo:
     image: mongo:6.0

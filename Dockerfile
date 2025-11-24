@@ -27,15 +27,10 @@ COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
 COPY --from=build /app/node_modules/@prisma ./node_modules/@prisma
 
-# Copy start helper and wait script from build stage
-COPY --from=build /app/start.sh ./start.sh
-COPY --from=build /app/scripts ./scripts
-RUN chmod +x ./start.sh
-
 # Copy built application
 COPY --from=build /app/dist ./dist
 COPY package.json ./package.json
 
 EXPOSE 3000
 
-CMD ["sh", "./start.sh"]
+CMD ["node", "./dist/index.js"]
