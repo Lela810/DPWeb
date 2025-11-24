@@ -1,0 +1,33 @@
+services:
+  app:
+    build: .
+    env_file: .env
+    environment:
+      # Force the containerized app to use the mongo service hostname
+      DATABASE_URL: "mongodb://mongo:27017/DPWEB"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    # Ensure MongoDB is healthy before starting the app
+    depends_on:
+      mongo:
+        condition: service_healthy
+    # Start wrapper will wait for Mongo, run prisma generate and start the app
+    # (no command override needed; image CMD `start.sh` will run)
+    # Keep restart policy so container restarts on failure
+
+  mongo:
+    image: mongo:6.0
+    restart: unless-stopped
+    volumes:
+      - mongo-data:/data/db
+    environment:
+      - MONGO_INITDB_DATABASE=dpweb
+    healthcheck:
+      test: [ "CMD", "mongo", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  mongo-data:

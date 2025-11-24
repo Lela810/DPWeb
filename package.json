@@ -7,6 +7,7 @@
 	"scripts": {
 		"build-css": "npx tailwindcss -o src/public/main.css",
 		"gulp": "npx gulp",
+		"build": "npm run build-prisma && npm run gulp",
 		"start": "node ./dist/index.js",
 		"dev": "nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts'",
 		"build-prisma": "npx prisma generate",
@@ -36,9 +37,9 @@
 		"@types/passport-microsoft": "^0.0.0",
 		"@types/tailwindcss": "^3.1.0",
 		"del": "^7.0.0",
-		"gulp": "^4.0.2",
+		"gulp": "^5.0.1",
 		"gulp-typescript": "^6.0.0-alpha.1",
-		"nodemon": "^2.0.20",
+		"nodemon": "^3.1.11",
 		"tailwindcss": "^3.2.4",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.8.2"
@@ -58,12 +59,12 @@
 		"express-session": "^1.17.3",
 		"method-override": "^3.0.0",
 		"morgan": "^1.10.0",
-		"nodemailer": "^6.8.0",
+		"nodemailer": "^7.0.10",
 		"passport": "^0.6.0",
 		"passport-microsoft": "^1.0.0",
 		"path": "^0.12.7",
-		"prisma": "^4.7.1",
-		"tinymce": "^6.3.0",
+		"prisma": "^4.16.2",
+		"tinymce": "^8.2.2",
 		"validate.js": "^0.13.1"
 	},
 	"browserslist": {

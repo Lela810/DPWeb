@@ -92,3 +92,5 @@ package-lock.json
 
 # Electron-Forge
 out/
+
+dist/
