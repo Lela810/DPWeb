@@ -19,7 +19,7 @@ import {
 	mailRouter,
 	indexRouter,
 	recipientsRouter,
-	activitiesRouter,
+	activityRouter,
 } from './routes/index.js';
 import { limiter, errorHandler } from './js/middleware.js';
 import { fileURLToPath } from 'url';
@@ -124,7 +124,7 @@ app.use('/home', ensureAuthenticated, homeRouter);
 app.use('/invite', ensureAuthenticated, inviteRouter);
 app.use('/mail', ensureAuthenticated, mailRouter);
 app.use('/recipients', ensureAuthenticated, recipientsRouter);
-app.use('/activities', ensureAuthenticated, activitiesRouter);
+app.use('/activity', ensureAuthenticated, activityRouter);
 app.use('/', indexRouter);
 app.use(errorHandler);
 

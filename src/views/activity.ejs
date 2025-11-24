@@ -12,7 +12,7 @@
 
   <div>
     <button>
-      <a href="/activities/edit">Neue Aktivität</a>
+      <a href="/activity/create">Neue Aktivität</a>
     </button>
   </div>
 
@@ -22,7 +22,7 @@
       <span><%= activities[i].name %></span>
       <span><%= activities[i].date %></span>
       <button>
-        <a href="/activities/edit?id=<%= activities[i].id %>">Bearbeiten</a>
+        <a href="/activity/edit?id=<%= activities[i].id %>">Bearbeiten</a>
       </button>
     </li>
     <% } %>

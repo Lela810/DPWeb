@@ -9,9 +9,7 @@ services:
       - "3000:3000"
     restart: unless-stopped
     # Ensure MongoDB is healthy before starting the app
-    depends_on:
-      mongo:
-        condition: service_healthy
+
     # Run prisma generate at container start as a safety-net, then start the app
     command: sh -c "npx prisma generate || true && npm run start"
 
