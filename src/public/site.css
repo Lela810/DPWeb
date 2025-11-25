@@ -1,0 +1,50 @@
+/* site.css — custom project-wide styles (safe from Tailwind regenerate)
+   Styles here won't be overwritten when Tailwind rebuilds `main.css`.
+*/
+
+/* Background supporting light and dark modes.
+   We make the dark-mode body intentionally lighter than `bg-gray-900` (nav's dark color)
+   so the nav (when using `dark:bg-gray-900`) reads darker in contrast.
+*/
+html, body {
+  height: 100%;
+}
+
+:root{
+  --body-light-top: #ffffff;
+  --body-light-bottom: #f3f4f6;
+  --body-dark-top: #374151; /* gray-700 — lighter than gray-900 */
+  --body-dark-bottom: #071022; /* deep accent */
+}
+
+body {
+    margin: 0;
+    color: #f3f4f6;
+    background:  var(--body-dark-top);
+    background-attachment: fixed;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+}
+
+@media (prefers-color-scheme: dark) {
+  body {
+    color: #e6edf3;
+    /* top is lighter (gray-700) and bottom uses a deep accent; overall lighter than nav dark (#111827 / gray-900) */
+  }
+}
+
+/* Constrain page content (all elements following the nav) so individual views
+   don't need to set their own max-width. This applies a centered max-width and
+   horizontal padding to each top-level element after the nav. Adjust
+   `max-width` or padding as needed. */
+body ~ * {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}

@@ -4,160 +4,120 @@
 <head>
   <%- include('./partials/head'); %>
   <script type="text/javascript" src="/js/confirmButtonPress.js"></script>
-
 </head>
 
 <body>
-
   <%- include('./partials/nav'); %>
-<div lass="bg-gray-100 min-h-screen flex items-center justify-center px-4 py-8">
 
 
-<div class="bg-blue-500 shadow-md rounded-lg max-w-2xl mx-auto p-8">
-  <h1 class="text-2xl font-semibold mb-6 text-gray-800">Aktivität bearbeiten</h1>
-
-  <form action="/activity/<%= action %>" method="POST" enctype="multipart/form-data" class="space-y-6">
-
-    <div>
-    <label for="title" class="block text-sm font-medium text-gray-700">Titel</label>
-    <input type="text" id="title" name="title" value="<%= activity.title %>" required
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+    <div class="mx-auto max-w-2xl text-center">
+      <h1 class="text-4xl font-semibold tracking-tight text-white sm:text-5xl">Aktivität bearbeiten</h1>
+      <p class="mt-2 text-lg leading-8 text-gray-400">Bearbeite die Angaben zur Aktivität und speichere die Änderungen.</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <div>
-      <label for="date" class="block text-sm font-medium text-gray-700">Datum</label>
-      <input type="date" id="date" name="date" value="<%= activity.date.toISOString().split('T')[0] %>" required
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+    <!-- Centered card to constrain width and add contrast -->
+    <div class="relative mx-auto mt-12 max-w-4xl">
+      <div class="bg-gray-800/50 backdrop-blur-sm rounded-2xl p-8 ring-1 ring-white/6">
+        <form action="/activity/<%= action %>" method="POST" enctype="multipart/form-data" class="mx-auto mt-0 max-w-xl sm:mt-0">
+          <% if (action === 'update' && activity && activity.id) { %>
+            <input type="hidden" name="id" value="<%= activity.id %>">
+          <% } %>
+          <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+            <%- include('./components/input', {
+                label: 'Titel',
+                id: 'title',
+                value: activity.title,
+                isRequired: true
+              }) %>
+
+          <%- include('./components/input', {
+              label: 'Datum',
+              id: 'date',
+              type: 'date',
+              value: (activity.date ? activity.date.toISOString().split('T')[0] : ''),
+              isRequired: true
+            }) %>
+
+          <%- include('./components/input', {
+              label: 'Startzeit',
+              id: 'start_time',
+              type: 'time',
+              value: activity.start_time || '',
+              isRequired: true
+            }) %>
+
+          <%- include('./components/input', {
+              label: 'Endzeit',
+              id: 'end_time',
+              type: 'time',
+              value: activity.end_time || '',
+              isRequired: true
+            }) %>
+
+          <%- include('./components/input', {
+              label: 'Ort',
+              id: 'location',
+              type: 'text',
+              value: activity.location || '',
+              isRequired: true
+            }) %>
+
+          <%- include('./components/input', {
+              label: 'Verantwortlich',
+              id: 'responsible',
+              type: 'text',
+              value: activity.responsible || '',
+              isRequired: true
+            }) %>
+
+          <div class="sm:col-span-2">
+            <label for="goal" class="block text-sm font-semibold text-white">Ziel</label>
+            <div class="mt-2.5">
+              <textarea id="goal" name="goal" rows="3" required class="block w-full rounded-md bg-white/10 border border-white/10 px-3.5 py-2 text-base text-white placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"><%= activity.goal %></textarea>
+            </div>
+          </div>
+
+          <div>
+            <label for="departmant" class="block text-sm font-semibold text-white">Abteilung</label>
+            <div class="mt-2.5">
+              <select   id="departmant" name="departmant" required class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/10 border border-white/10 py-2 pr-7 pl-3.5 text-base text-white placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6">
+                <option value="" disabled <%= !activity.departmant ? 'selected' : '' %>>Bitte Abteilung wählen</option>
+                <% if (typeof departments !== 'undefined' && departments.length > 0) { %>
+                  <% departments.forEach(dep => { %>
+                    <% const value = (dep.name !== undefined) ? dep.name : dep; %>
+                    <option class="text-black" value="<%= value %>" <%= activity.departmant === value ? 'selected' : '' %>><%= value %></option>
+                  <% }) %>
+                <% } else { %>
+                  <option disabled>Keine Abteilungen verfügbar</option>
+                <% } %>
+              </select>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-x-3 sm:col-span-2">
+            <input id="needs_SiKo" name="needs_SiKo" type="checkbox" value="true" <%= activity.needs_SiKo ? 'checked' : '' %> class="h-4 w-4 text-indigo-500 rounded bg-white/5">
+            <label for="needs_SiKo" class="text-sm text-gray-300">Sicherheitskonzept benötigt?</label>
+            <% if (activity.needs_SiKo === true) { %>
+              <label for="SiKo" class="block text-sm font-semibold text-white">Sicherheitskonzept (PDF)</label>
+              <div class="mt-2.5">
+                <input id="SiKo" name="SiKo" type="file" accept=".pdf" class="block w-full text-sm text-gray-200">
+              </div>
+            <% } %>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label for="bad_weather_info" class="block text-sm font-semibold text-white">Schlechtwetter-Info</label>
+            <div class="mt-2.5">
+              <textarea id="bad_weather_info" name="bad_weather_info" rows="2" class="block w-full rounded-md bg-white/10 border border-white/10 px-3.5 py-2 text-base text-white placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"><%= activity.bad_weather_info || '' %></textarea>
+            </div>
+          </div>
+            <div class="mt-10">
+              <button type="submit" class="block w-full rounded-md bg-indigo-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Speichern</button>
+          </div>
+        </form>
+      </div>
     </div>
-
-    <div>
-      <label for="start_time" class="block text-sm font-medium text-gray-700">Startzeit</label>
-      <input type="time" id="start_time" name="start_time" value="<%= activity.start_time %>" required
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-
-    <div>
-      <label for="end_time" class="block text-sm font-medium text-gray-700">Endzeit</label>
-      <input type="time" id="end_time" name="end_time" value="<%= activity.end_time %>" required
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-
-    <div>
-      <label for="responsible" class="block text-sm font-medium text-gray-700">Verantwortlich</label>
-      <input type="text" id="responsible" name="responsible" value="<%= activity.responsible %>" required
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-    </div>
-
-    <div>
-    <label for="goal" class="block text-sm font-medium text-gray-700">Ziel</label>
-    <textarea id="goal" name="goal" rows="3" required
-      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"><%= activity.goal %></textarea>
-    </div>
-
-    <div>
-    <label for="location" class="block text-sm font-medium text-gray-700">Ort</label>
-    <input type="text" id="location" name="location" value="<%= activity.location %>" required
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-
-    <div>
-    <label for="departmant" class="block text-sm font-medium text-gray-700">Abteilung</label>
-    <select id="departmant" name="departmant" required
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-      <option value="" disabled <%= !activity.departmant ? 'selected' : '' %>>Bitte Abteilung wählen</option>
-      <% if (typeof departments !== 'undefined' && departments.length > 0) { %>
-      <% departments.forEach(dep => { %>
-        <% const value = (dep.name !== undefined) ? dep.name : dep; %>
-        <option value="<%= value %>" <%= activity.departmant === value ? 'selected' : '' %>><%= value %></option>
-      <% }) %>
-      <% } else { %>
-      <option disabled>Keine Abteilungen verfügbar</option>
-      <% } %>
-    </select>
-    </div>
-
-    <div>
-    <label for="material" class="block text-sm font-medium text-gray-700">Material (kommagetrennt)</label>
-    <input type="text" id="material" name="material" value="<%= activity.material.join(', ') %>"
-      class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-    </div>
-
-    <div class="flex items-center">
-    <input type="checkbox" id="needs_SiKo" name="needs_SiKo" value="true"
-      <%= activity.needs_SiKo ? 'checked' : '' %>
-      class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
-    <label for="needs_SiKo" class="ml-2 block text-sm text-gray-700">Sicherheitskonzept benötigt?</label>
-    </div>
-
-    <div>
-    <label for="SiKo" class="block text-sm font-medium text-gray-700">Sicherheitskonzept (PDF)</label>
-    <input type="file" id="SiKo" name="SiKo" accept=".pdf"
-      class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-    </div>
-
-    <div>
-    <label for="bad_weather_info" class="block text-sm font-medium text-gray-700">Schlechtwetter-Info</label>
-    <textarea id="bad_weather_info" name="bad_weather_info" rows="2"
-      class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"><%= activity.bad_weather_info || '' %></textarea>
-    </div>
-
-    <div class="text-right">
-    <button type="submit"
-      class="inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-      Speichern
-    </button>
-    </div>
-  </form>
-  </div>
-</div>
-  <% if(activity.detailprogrammId == "" && Object.keys(activity).length > 0) { %>
-  <div>
-    <button>
-      <a href="/detailprogramme/edit?activityId=<%= activity.id %>">Neues DP</a>
-    </button>
-  </div>
-  <% } %>
-
-  <% if (Object.keys(activity).length > 0) { %>
-  <div>
-    <button>
-      <a href="/mail/editor?activityId=<%= activity.id %>">Mail Senden</a>
-    </button>
-  </div>
-  <% } %>
-
-  <% if(typeof(mails) != 'undefined') { %>
-  <% for(let i = (mails.length-1); i+1 > 0; i--) { %>
-  <ul>
-    <li>
-      <a href="/mail/view?id=<%= mails[i].id %>">
-        <span><%= mails[i].sender %></span>
-        <span><%= mails[i].subject %></span>
-        <span><% const options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }; %><%= mails[i].date.toLocaleString("de-CH", options) %></span>
-      </a>
-    </li>
-  </ul>
-  <% } %>
-  <% } %>
-
-  <% if(typeof(detailprogramm) != 'undefined') { %>
-  <ul>
-    <li>
-      <span><%= detailprogramm.date %></span>
-      <span><%= detailprogramm.starttime %></span>
-      <span><%= detailprogramm.endtime %></span>
-      <span><%= detailprogramm.responsible %></span>
-      <button>
-        <a href="/detailprogramme/edit?id=<%= detailprogramm.id %>">Bearbeiten</a>
-      </button>
-    </li>
-  </ul>
-  <% } %>
-
-
-
+      
 </body>
 <footer>
   <%- include('./partials/footer'); %>

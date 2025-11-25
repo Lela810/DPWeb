@@ -9,6 +9,7 @@ FROM deps AS build
 WORKDIR /app
 # Copy source into build stage
 COPY . .
+RUN npm run build-css
 
 # Run build script which should run `prisma generate` and asset build
 # NOTE: set `NODE_TLS_REJECT_UNAUTHORIZED=0` here to avoid failures when
