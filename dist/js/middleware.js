@@ -7,17 +7,20 @@ var Logger;
 })(Logger || (Logger = {}));
 export const limiter = rateLimit({
     windowMs: 1 * 60 * 1000,
-    max: 100,
+    max: 200,
     standardHeaders: true,
     legacyHeaders: false,
 });
 export const errorHandler = (err, _req, res, _next) => {
-    Logger.error(err.message);
-    const status = err.status || 400;
+    // Log full stack when available to aid debugging
+    Logger.error(err.stack || err.message);
+    const status = err.status || 500;
+    res.status(status);
     res.render('error', {
         user: _req.user,
         page: status,
         errorcode: status,
         message: err.message,
+        stack: (process.env.DEV === 'true') ? err.stack : undefined,
     });
 };

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <%- include('./partials/head'); %>
+    <script type="text/javascript" src="/js/confirmButtonPress.js"></script>
+</head>
+
+<body class="bg-gradient-to-b from-gray-900 to-gray-950 min-h-screen text-white">
+  <%- include('./partials/nav'); %>
+    <main class="mx-auto max-w-6xl px-4 py-12">
+
+      <div class="mx-auto max-w-2xl text-center mb-8">
+        <h1 class="text-4xl font-semibold tracking-tight text-white sm:text-5xl">Aktivität bearbeiten</h1>
+        <p class="mt-2 text-lg leading-8 text-gray-400">Bearbeite die Angaben zur Aktivität und speichere die
+          Änderungen.</p>
+      </div>
+
+      <!-- Centered card to constrain width and add contrast -->
+      <section class="bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 ring-1 ring-white/6 shadow-lg">
+        <form action="/activity/<%= action %>" method="POST" enctype="multipart/form-data" class="mx-auto mt-0 ">
+          <% if (action==='update' && activity && activity.id) { %>
+            <input type="hidden" name="id" value="<%= activity.id %>">
+            <% } %>
+
+              <div class="grid grid-cols-12 gap-x-8 gap-y-6">
+                <%- include('./components/input', { label: 'Titel' , id: 'title' , value: activity.title, isRequired:
+                  true, className: 'sm:col-span-6' }) %>
+
+                  <%- include('./components/input', { label: 'Datum' , id: 'date' , type: 'date' , value: (activity.date
+                    ? activity.date.toISOString().split('T')[0] : '' ), isRequired: true, className: 'sm:col-span-2' })
+                    %>
+
+                    <%- include('./components/input', { label: 'Startzeit' , id: 'start_time' , type: 'time' , value:
+                      activity.start_time || '' , isRequired: true, className: 'sm:col-span-2' }) %>
+
+                      <%- include('./components/input', { label: 'Endzeit' , id: 'end_time' , type: 'time' , value:
+                        activity.end_time || '' , isRequired: true, className: 'sm:col-span-2' }) %>
+
+                        <%- include('./components/input', { label: 'Verantwortlich' , id: 'responsible' , type: 'text' ,
+                          value: activity.responsible || '' , isRequired: true, className: 'sm:col-span-4' }) %>
+
+                          <%- include('./components/input', { label: 'Ort' , id: 'location' , type: 'text' , value:
+                            activity.location || '' , isRequired: true, className: 'sm:col-span-4' }) %>
+
+                            <div class="sm:col-span-4">
+                              <label for="department" class="block text-sm font-semibold text-white">Abteilung</label>
+                              <div class="mt-2.5">
+                                <select id="department" name="department" required
+                                  class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white/10 border border-white/10 py-2 pr-7 pl-3.5 text-base text-white placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6">
+                                  <option value="" disabled <%=!activity.department ? 'selected' : '' %>>Bitte Abteilung
+                                    wählen</option>
+                                  <% if (typeof departments !=='undefined' && departments.length> 0) { %>
+                                    <% departments.forEach(dep=> { %>
+                                      <% const value=(dep.name !==undefined) ? dep.name : dep; %>
+                                        <option class="text-black" value="<%= value %>" <%=activity.department===value
+                                          ? 'selected' : '' %>><%= value %>
+                                        </option>
+                                        <% }) %>
+                                          <% } else { %>
+                                            <option disabled>Keine Abteilungen verfügbar</option>
+                                            <% } %>
+                                </select>
+                              </div>
+                            </div>
+
+                            <div class="sm:col-span-12">
+                              <div class="rounded-lg border border-white/10 bg-white/5 p-4">
+                                <div class="flex items-center justify-between gap-3">
+                                  <div>
+                                    <label class="block text-sm font-semibold text-white">Programm</label>
+                                  </div>
+                                  <button id="addProgram" type="button"
+                                    class="inline-flex items-center gap-2 rounded-md bg-white/10 border border-white/10 px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/20">
+                                    <span class="text-lg leading-none">+</span>
+                                    Programmpunkt
+                                  </button>
+                                </div>
+
+                                <!-- program list placeholder -->
+                                <div id="programList" class="mt-4 space-y-3"></div>
+
+                                <!-- server-rendered template for program row (keeps markup on server, no inline JS) -->
+                                <template id="program-row-template">
+                                  <%- include('./components/program_row') %>
+                                </template>
+
+                                <!-- program data as JSON (no inline JS) -->
+                                <script type="application/json"
+                                  id="programDataJson"><%- JSON.stringify(detailprogramm || []) %></script>
+                              </div>
+                            </div>
+
+                            <!-- Material -->
+                            <div class="sm:col-span-12">
+                              <label class="block text-sm font-semibold text-white">Material</label>
+                              <div class="mt-2.5 rounded-lg border border-white/10 bg-white/5 p-4">
+                                <div id="materialsContainer" class="space-y-3"></div>
+
+                                <!-- single material input template -->
+                                <template id="material-input-template">
+                                  <div class="material-item w-1/3 min-w-0 relative">
+                                    <input name="materials[]" type="text" placeholder="Material"
+                                      class="material-input block w-full pr-9 rounded-md bg-white/10 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-gray-400 focus:outline-2 focus:outline-offset-2 focus:outline-indigo-500">
+                                    <button type="button"
+                                      class="remove-material absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                                      aria-label="Material entfernen">✕</button>
+                                  </div>
+                                </template>
+
+                                <!-- materials data as JSON (no inline JS) -->
+                                <script type="application/json"
+                                  id="materialsDataJson"><%- JSON.stringify(activity.materials || activity.material || []) %></script>
+                              </div>
+                            </div>
+
+                            <div class="sm:col-span-6">
+                              <label for="goal" class="block text-sm font-semibold text-white">Ziel</label>
+                              <div class="mt-2.5">
+                                <textarea id="goal" name="goal" rows="3" required
+                                  class="block w-full rounded-md bg-white/10 border border-white/10 px-3.5 py-2 text-base text-white placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"><%= activity.goal %></textarea>
+                              </div>
+                            </div>
+
+                            <div class="sm:col-span-6">
+                              <label for="bad_weather_info"
+                                class="block text-sm font-semibold text-white">Schlechtwetter-Info</label>
+                              <div class="mt-2.5">
+                                <textarea id="bad_weather_info" name="bad_weather_info" rows="2"
+                                  class="block w-full rounded-md bg-white/10 border border-white/10 px-3.5 py-2 text-base text-white placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500"><%= activity.bad_weather_info || '' %></textarea>
+                              </div>
+                            </div>
+
+
+                            <div class="flex items-center gap-x-3 sm:col-span-10">
+                              <input id="needs_SiKo" name="needs_SiKo" type="checkbox" value="true"
+                                <%=activity.needs_SiKo ? 'checked' : '' %> class="h-4 w-4 text-indigo-500 rounded
+                              bg-white/5">
+                              <label for="needs_SiKo" class="text-sm text-gray-300">Sicherheitskonzept benötigt?</label>
+
+                              <div id="sikoContainer" class="ml-4"
+                                style="display:<%= activity.needs_SiKo ? 'block' : 'none' %>;">
+                                <label for="SiKo" class="block text-sm font-semibold text-white">Sicherheitskonzept
+                                  (PDF)</label>
+                                <div class="mt-2.5">
+                                  <input id="SiKo" name="SiKo" type="file" accept=".pdf"
+                                    class="block w-full text-sm text-gray-200">
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="mt-10 sm:col-span-2">
+                              <button type="submit"
+                                class="block w-full rounded-md bg-indigo-500 px-3.5 py-2.5 text-center text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Speichern</button>
+                            </div>
+
+              </div>
+        </form>
+
+      </section>
+    </main>
+</body>
+
+<footer>
+  <%- include('./partials/footer'); %>
+</footer>
+
+<!-- external JS only -->
+<script src="/js/activity.js" defer></script>
+
+</html>

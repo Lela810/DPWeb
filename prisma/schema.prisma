@@ -19,20 +19,6 @@ type InviteReceivers {
   rejected   Boolean
 }
 
-model detailprogramme {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  ablauf      String[]
-  date        String
-  endtime     String
-  location    String
-  material    String
-  responsible String
-  starttime   String
-  zeit        String[]
-  AbmeldenBis String
-  activityId  String   @unique
-}
-
 model invites {
   id        String            @id @default(auto()) @map("_id") @db.ObjectId
   created   DateTime          @default(now()) @db.Date
@@ -60,16 +46,66 @@ model recipients {
   @@unique([mail, name])
 }
 
-model activities {
-  id   String @id @default(auto()) @map("_id") @db.ObjectId
-  date String
-  name String
-
-  @@unique([date, name])
-}
-
 model sessions {
   id      String   @id @map("_id")
   expires DateTime @db.Date
   session String
+}
+
+enum department {
+  Pfadi
+  Woelfe @map("Wölfe")
+  Biber
+  Pio
+  Leiter
+}
+
+model Activity {
+  id               String      @id @default(auto()) @map("_id") @db.ObjectId
+  title            String
+  date             DateTime // vorher String
+  start_time       String // Uhrzeit bleibt String
+  end_time         String
+  goal             String
+  location         String
+  responsible      String
+  department       department?
+  material         String[]
+  needs_SiKo       Boolean
+  SiKo             Bytes?
+  bad_weather_info String?
+
+  // Relations one to many
+  programs Program[]
+  flyer    Flyer?
+}
+
+model Program {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  time        String
+  title       String
+  description String
+  responsible String
+
+  // Relation
+  activityId String   @db.ObjectId
+  activity   Activity @relation(fields: [activityId], references: [id])
+}
+
+model Flyer {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  title           String
+  subtitle        String
+  description     String
+  items_to_take   String[]
+  meeting_point   String
+  sender          String
+  is_registration Boolean
+  deadline_at     DateTime // vorher String
+  sufix           String
+  are_mails_send  Boolean
+
+  // Relation (one-to-one)
+  activityId String   @unique @db.ObjectId
+  activity   Activity @relation(fields: [activityId], references: [id])
 }

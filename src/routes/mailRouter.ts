@@ -34,7 +34,7 @@ mailRouter.get(
 				},
 			});
 
-			const activity = await prisma.activities.findUniqueOrThrow({
+			const activity = await prisma.activity.findUniqueOrThrow({
 				where: {
 					id: mail.activityId,
 				},
@@ -75,7 +75,7 @@ mailRouter.get(
 		try {
 			let mail: mails = {} as mails;
 			const activityId = req.query.activityId as string;
-			const activity = await prisma.activities.findUniqueOrThrow({
+			const activity = await prisma.activity.findUniqueOrThrow({
 				where: {
 					id: activityId,
 				},

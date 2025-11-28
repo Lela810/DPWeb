@@ -3,7 +3,7 @@
 
 <head>
   <%- include('./partials/head'); %>
-  <script type="text/javascript" src="/js/confirmSave.js"></script>
+  <script type="text/javascript" src="/js/confirmButtonPress.js"></script>
   <script type="text/javascript" src="/tinymce/tinymce.min.js"></script>
 
 
@@ -41,12 +41,17 @@
     <% } %>
   </form>
 
-  <% if (Object.keys(responses).length > 0) { %>
+  <% if(typeof activity != "undefined") { %>
+  <a href="/activities/edit?id=<%= activity.id %>">Aktivität</a>
+  <% } %>
+
+  <% if (Object.keys(receivers).length > 0) { %>
   <ul>
-    <% for(let i = 0; i < responses.names.length; i++) { %>
+    <% for(let i = 0; i < receivers.length; i++) { %>
     <li>
-      <span><%= responses.names[i] %></span>
-      <span><%= responses.mails[i] %></span>
+      <span><%= receivers[i].name %></span>
+      <span><%= receivers[i].mail %></span>
+      <span><%= receivers[i].rejected %></span>
     </li>
     <% } %>
   </ul>

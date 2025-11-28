@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/index.ts", "use": "@vercel/node", "config": { "includeFiles": ["src/views/**", "src/public/**", "dist/**"] } }
+  ],
+  "routes": [
+    { "src": "^/(.*)$", "dest": "/api/index.ts" }
+  ],
+  "env": {
+    "DATABASE_URL": "@DATABASE_URL",
+    "SESSION_SECRET": "@SESSION_SECRET",
+    "MICROSOFT_GRAPH_CLIENT_ID": "@MICROSOFT_GRAPH_CLIENT_ID",
+    "MICROSOFT_GRAPH_CLIENT_SECRET": "@MICROSOFT_GRAPH_CLIENT_SECRET"
+  }
+}
