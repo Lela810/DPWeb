@@ -8,6 +8,7 @@
 		"build-css": "npx tailwindcss -o src/public/main.css",
 		"gulp": "npx gulp",
 		"build": "npm run build-prisma && npm run gulp && npm run build-css",
+		"postinstall": "npm run build-prisma",
 		"start": "node ./dist/index.js",
 		"dev": "nodemon --watch './**/*.ts' --exec 'node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts'",
 		"build-prisma": "npx prisma generate",
