@@ -13,10 +13,12 @@
 <% const _value = typeof value !== 'undefined' ? value : ''; %>
 <% const _type = typeof type !== 'undefined' ? type : 'text'; %>
 <% const _cls = typeof className !== 'undefined' ? className : (typeof cls !== 'undefined' ? cls : ''); %>
+<% const _name = typeof name !== 'undefined' ? name : _id; %>
+<% const _place = typeof placeholder !== 'undefined' ? placeholder : _id; %>
 
 <div class="<%= _cls %>">
     <label for="<%= _id %>" class="block text-sm font-semibold text-white"><%= _label %></label>
     <div class="mt-2.5">
-        <input id="<%= _id %>" name="<%= _id %>" type="<%= _type %>" <%= (isRequired || required) ? 'required' : '' %> value="<%= _value %>" class="block w-full rounded-md bg-white/10 border border-white/10 px-3.5 py-2 text-base text-white placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
+        <input id="<%= _id %>" name="<%= _name %>" placeholder="<%= _place %>" type="<%= _type %>" <%= (isRequired || required) ? 'required' : '' %> value="<%= _value %>" class="block w-full rounded-md bg-white/10 border border-white/10 px-3.5 py-2 text-base text-white placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500">
     </div>
 </div>

@@ -1,36 +1,78 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import validate from 'validate.js';
 import { ObjectID } from 'bson';
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 import express from 'express';
+import { downloadMidataRecipients, filterPeopleWithoutRoles, } from '../js/syncMidata.js';
 export const recipientsRouter = express.Router();
-recipientsRouter.get('/', function (req, res) {
-    return __awaiter(this, void 0, void 0, function* () {
-        res.render('recipients', {
-            user: req.user,
-            page: 'Mail',
-            recipients: yield prisma.recipients.findMany(),
-        });
+async function renderRecipients(res, recipients, req, error) {
+    res.render('recipients', {
+        user: req.user,
+        page: 'Mail',
+        recipients: recipients,
+        syncedRecipients: await prisma.recipients.findMany({
+            where: { synced: true },
+        }),
+        error: error,
     });
+}
+recipientsRouter.get('/', async function (req, res) {
+    await renderRecipients(res, await prisma.recipients.findMany({ where: { synced: !true } }), req);
 });
-recipientsRouter.post('/', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+recipientsRouter.post('/sync', async (req, res, next) => {
+    try {
+        console.log('Syncing recipients');
+        const MiDataData = await downloadMidataRecipients();
+        const Teilnehmer = await filterPeopleWithoutRoles(MiDataData);
+        const dbRecipients = await prisma.recipients.findMany({
+            where: { synced: true },
+        });
+        // Create a map with combined key (name+email) for faster lookup
+        const dbRecipientsMap = new Map(dbRecipients.map((recipient) => [
+            `${recipient.name}|${recipient.mail}`,
+            recipient,
+        ]));
+        // Process each person from MiData
+        for (const person of Teilnehmer) {
+            if (!person.email)
+                continue;
+            const fullName = person.first_name + ' ' + person.last_name;
+            const compositeKey = `${fullName}|${person.email}`;
+            const existingRecipient = dbRecipientsMap.get(compositeKey);
+            if (existingRecipient) {
+                // Person exists in DB, remove from map to mark as processed
+                dbRecipientsMap.delete(compositeKey);
+            }
+            else {
+                // New person, create recipient
+                console.log(`Created recipient: ${fullName} (${person.email})`);
+                await prisma.recipients.create({
+                    data: {
+                        name: fullName,
+                        mail: person.email,
+                        synced: true,
+                    },
+                });
+            }
+        }
+        // Delete recipients that aren't in MiData anymore
+        for (const [_, remainingRecipient] of dbRecipientsMap.entries()) {
+            console.log(`Deleting recipient: ${remainingRecipient.name} (${remainingRecipient.mail})`);
+            await prisma.recipients.delete({
+                where: { id: remainingRecipient.id },
+            });
+        }
+        await renderRecipients(res, await prisma.recipients.findMany({ where: { synced: !true } }), req);
+    }
+    catch (error) {
+        next(error);
+    }
+});
+recipientsRouter.post('/', async (req, res, next) => {
     try {
         if (Object.keys(req.body).length == 0) {
-            yield prisma.recipients.deleteMany();
-            res.render('recipients', {
-                user: req.user,
-                page: 'Mail',
-                recipients: [],
-            });
+            await prisma.recipients.deleteMany({ where: { synced: false } });
+            await renderRecipients(res, await prisma.recipients.findMany({ where: { synced: false } }), req);
             return;
         }
         if (!Array.isArray(req.body.name)) {
@@ -42,55 +84,56 @@ recipientsRouter.post('/', (req, res, next) => __awaiter(void 0, void 0, void 0,
         if (!Array.isArray(req.body.id)) {
             req.body.id = [req.body.id];
         }
+        let entryError = false;
         for (let i = 0; i < req.body.name.length; i++) {
             if (validate({ mail: req.body.mail[i] }, { mail: { email: true } }) !=
                 undefined) {
-                let recipients = [];
-                for (let i = 0; i < req.body.name.length; i++) {
-                    recipients.push({
-                        name: req.body.name[i],
-                        mail: req.body.mail[i],
-                    });
-                }
-                res.render('recipients', {
-                    user: req.user,
-                    page: 'Mail',
-                    recipients: recipients,
-                    error: 'Invalid email address',
-                });
-                return;
+                entryError = true;
+                break;
             }
         }
-        const recipients = yield prisma.recipients.findMany();
-        for (let i = 0; i < recipients.length; i++) {
-            if (req.body.id.find((id) => id == recipients[i].id) == undefined) {
-                yield prisma.recipients.delete({
+        if (entryError) {
+            let recipients = [];
+            for (let i = 0; i < req.body.name.length; i++) {
+                recipients.push({
+                    id: req.body.id[i] || new ObjectID().toString(),
+                    name: req.body.name[i],
+                    mail: req.body.mail[i],
+                });
+            }
+            await renderRecipients(res, recipients, req, 'Invalid email address');
+        }
+        else {
+            const recipients = await prisma.recipients.findMany({
+                where: { synced: false },
+            });
+            for (let i = 0; i < recipients.length; i++) {
+                if (req.body.id.find((id) => id == recipients[i].id) == undefined) {
+                    await prisma.recipients.delete({
+                        where: {
+                            id: recipients[i].id,
+                        },
+                    });
+                }
+            }
+            for (let i = 0; i < req.body.name.length; i++) {
+                const recipientEntry = {
+                    mail: req.body.mail[i],
+                    name: req.body.name[i],
+                    synced: false,
+                };
+                await prisma.recipients.upsert({
+                    create: recipientEntry,
+                    update: recipientEntry,
                     where: {
-                        id: recipients[i].id,
+                        id: req.body.id[i] || new ObjectID().toString(),
                     },
                 });
             }
+            await renderRecipients(res, await prisma.recipients.findMany({ where: { synced: false } }), req);
         }
-        for (let i = 0; i < req.body.name.length; i++) {
-            const recipientEntry = {
-                mail: req.body.mail[i],
-                name: req.body.name[i],
-            };
-            yield prisma.recipients.upsert({
-                create: recipientEntry,
-                update: recipientEntry,
-                where: {
-                    id: req.body.id[i] || new ObjectID().toString(),
-                },
-            });
-        }
-        res.render('recipients', {
-            user: req.user,
-            page: 'Mail',
-            recipients: yield prisma.recipients.findMany(),
-        });
     }
     catch (error) {
         next(error);
     }
-}));
+});

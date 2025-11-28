@@ -16,16 +16,16 @@
   </h3>
 
   <% if (message) { %>
-    <div class="mx-4 my-2 p-2 bg-red-100 rounded text-black-800">
+    <div class="mx-4 my-2 p-2 bg-red-800 rounded">
       <strong>Message:</strong>
-      <div class="text-black-800"><%= message %></div>
+      <div><%= message %></div>
     </div>
   <% } %>
 
   <% if (stack) { %>
-    <div class="mx-4 my-2 p-2 bg-gray-100 rounded text-black-800">
+    <div class="mx-4 my-2 p-2 bg-gray-800 rounded">
       <strong>Stack:</strong>
-      <pre class="text-black-800" style="white-space: pre-wrap;"><%= stack %></pre>
+      <pre style="white-space: pre-wrap;"><%= stack %></pre>
     </div>
   <% } %>
 

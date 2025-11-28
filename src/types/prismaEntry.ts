@@ -3,7 +3,7 @@ import {
 	mails,
 	recipients,
 	Activity,
-	Departmant,
+	department,
 	Program,
 	Flyer
 } from '@prisma/client';
@@ -13,7 +13,7 @@ type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 export type mailEntry = PartialBy<PartialBy<mails, 'id'>, 'date'>;
 export type inviteEntry = PartialBy<PartialBy<invites, 'id'>, 'created'>;
 export type recipientEntry = PartialBy<recipients, 'id'>;
-export type departmantEntry = Departmant;
+export type departmentEntry = department;
 export type activityEntry = PartialBy<Activity, 'id'>;
 export type programEntry = PartialBy<Program, 'id'>;
 export type flyerEntry = PartialBy<Flyer, 'id'>;

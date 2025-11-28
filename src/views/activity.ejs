@@ -1,33 +1,112 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="de">
 <head>
   <%- include('./partials/head'); %>
-
 </head>
-
-<body>
-
+<body class="bg-gradient-to-b from-gray-900 to-gray-950 min-h-screen text-white">
   <%- include('./partials/nav'); %>
 
-  <div>
-    <button>
-      <a href="/activity/create">Neue Aktivität</a>
-    </button>
-  </div>
+  <main class="mx-auto max-w-6xl px-4 py-12">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-semibold tracking-tight">Aktivitäten</h1>
+        <p class="mt-1 text-sm text-gray-400">Übersicht aller Aktivitäten</p>
+      </div>
 
-  <ul>
-    <% for(let i = 0; i < activities.length; i++) { %>
-    <li>
-      <span><%= activities[i].name %></span>
-      <span><%= activities[i].date %></span>
-      <button>
-        <a href="/activity/edit?id=<%= activities[i].id %>">Bearbeiten</a>
-      </button>
-    </li>
-    <% } %>
-  </ul>
+      <!-- Search + Create -->
+      <div class="flex items-center"></div>
+        <div class="relative">
+          <label for="activitySearch" class="sr-only">Suche Aktivitäten</label>
+          <input id="activitySearch" type="search" placeholder="Suchen"
+            class="w-28 sm:w-48 text-sm rounded-md bg-white/5 border border-white/10 px-2 py-1.5 text-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          <button id="clearSearch" type="button" aria-label="Suche löschen"
+            class="absolute right-1 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white hidden">
+            ✕
+          </button>
+        </div>
+        <a href="/activity/create" class="inline-flex items-center gap-2 rounded-md bg-indigo-500 hover:bg-indigo-400 px-4 py-2 text-sm font-semibold text-white shadow-sm">
+          Neue Aktivität
+        </a>
+      </div>
+    </div>
 
+    <section class="bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 ring-1 ring-white/6 shadow-lg">
+      <% 
+        const list = (typeof activity !== 'undefined' && activity) ? activity 
+                     : ((typeof activitys !== 'undefined' && activitys) ? activitys : []);
+      %>
+
+      <% if (!list || list.length === 0) { %>
+        <div id="noDataStatic" class="text-center py-12">
+          <p class="text-gray-300">Keine Aktivitäten vorhanden.</p>
+          <a href="/activity/create" class="mt-4 inline-block rounded-md bg-indigo-500 hover:bg-indigo-400 px-4 py-2 text-sm font-semibold text-white">Erstellen</a>
+        </div>
+      <% } else { %>
+        <div class="overflow-x-auto">
+          <table id="activitysTable" class="min-w-full divide-y divide-gray-700">
+            <thead>
+              <tr class="text-left">
+                <th class="px-4 py-3 text-sm font-medium text-gray-300">Titel</th>
+                <th class="px-4 py-3 text-sm font-medium text-gray-300 hidden sm:table-cell">Datum</th>
+                <th class="px-4 py-3 text-sm font-medium text-gray-300">Zeit</th>
+                <th class="px-4 py-3 text-sm font-medium text-gray-300 hidden md:table-cell">Ort</th>
+                <th class="px-4 py-3 text-sm font-medium text-gray-300 hidden lg:table-cell">Abteilung</th>
+                <th class="px-4 py-3 text-sm font-medium text-gray-300 text-right">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-700">
+              <% list.forEach(function(a){ %>
+                <tr class="hover:bg-white/2" data-search="<%= [a.title, a.goal, a.location, a.department].filter(Boolean).join(' | ').toLowerCase() %>">
+                  <td class="px-4 py-3 align-top">
+                    <div class="text-sm font-semibold text-white"><%= a.title || '—' %></div>
+                    <div class="text-xs text-gray-400 mt-1"><%= a.goal ? (a.goal.length > 80 ? a.goal.slice(0,80) + '…' : a.goal) : '' %></div>
+                  </td>
+
+                  <td class="px-4 py-3 align-top hidden sm:table-cell text-sm text-gray-200">
+                    <%= a.date ? new Date(a.date).toLocaleDateString('de-DE') : '' %>
+                  </td>
+
+                  <td class="px-4 py-3 align-top text-sm text-gray-200">
+                    <%= a.start_time || '' %><% if (a.end_time) { %> — <%= a.end_time %><% } %>
+                  </td>
+
+                  <td class="px-4 py-3 align-top hidden md:table-cell text-sm text-gray-200">
+                    <%= a.location || '' %>
+                  </td>
+
+                  <td class="px-4 py-3 align-top hidden lg:table-cell text-sm text-gray-200">
+                    <%= a.department || '' %>
+                  </td>
+
+                  <td class="px-4 py-3 align-top text-right">
+                    <div class="inline-flex items-center gap-2">
+                      <a href="/activity/update?id=<%= a.id %>" class="text-sm text-gray-300 hover:text-white px-3 py-1 rounded-md bg-white/2">Bearbeiten</a>
+
+                      <form action="/activity/delete" method="POST" onsubmit="return confirm('Aktivität löschen?')" class="inline">
+                        <input type="hidden" name="id" value="<%= a.id %>">
+                        <button type="submit" class="text-sm text-red-300 hover:text-white px-3 py-1 rounded-md bg-white/2">Löschen</button>
+                      </form>
+                    </div>
+                  </td>
+                </tr>
+              <% }) %>
+
+              <!-- no results row (hidden by default) -->
+              <tr id="noResultsRow" class="hidden">
+                <td colspan="6" class="px-4 py-8 text-center text-gray-300">
+                  Keine Aktivitäten gefunden.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      <% } %>
+    </section>
+  </main>
+
+  <footer class="mt-12">
+    <%- include('./partials/footer'); %>
+  </footer>
+  <script src="/js/activity.js" defer ></script>
 </body>
-
 </html>

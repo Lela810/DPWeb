@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <%- include('./partials/head'); %>
+</head>
+
+<body class="bg-gradient-to-b from-gray-900 to-gray-950 min-h-screen text-white">
+    <%- include('./partials/nav'); %>
+
+        <main class="mx-auto max-w-6xl px-4 py-12">
+
+            <div class="mx-auto max-w-2xl text-center mb-8">
+                <h1 class="text-4xl font-semibold tracking-tight text-white sm:text-5xl">Aktivität</h1>
+                <p class="mt-2 text-lg leading-8 text-gray-400">Details der Aktivität</p>
+            </div>
+
+            <section class="bg-gray-800/60 backdrop-blur-sm rounded-2xl p-6 ring-1 ring-white/6 shadow-lg">
+                <div class="grid grid-cols-12 gap-x-8 gap-y-6">
+                    <div class="flex justify-between col-span-12">
+
+                        <div>
+                            <div class="mt-2 text-gray-200">
+                                <h1 class="text-2xl font-bold">
+                                    <%= activity.title || '—' %>
+                                </h1>
+                                <%= activity.date ? activity.date.toISOString().split('T')[0] : '' %> | <%=
+                                        activity.start_time || '' %> - <%= activity.end_time || '' %>
+                            </div>
+                        </div>
+                        <div class="flex text-sm row gap-x-8 gap-y-6 text-gray-400">
+                            <div class="sm:col-span-4">
+                                <label class="block text-sm font-semibold text-white">Verantwortlich</label>
+                                <div class="mt-2 text-gray-200">
+                                    <%= activity.responsible || '' %>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-4">
+                                <label class="block text-sm font-semibold text-white">Ort</label>
+                                <div class="mt-2 text-gray-200">
+                                    <%= activity.location || '' %>
+                                </div>
+                            </div>
+
+                            <div class="sm:col-span-4">
+                                <label class="block text-sm font-semibold text-white">Abteilung</label>
+                                <div class="mt-2 text-gray-200">
+                                    <%= activity.department || '' %>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-12">
+                        <div class="rounded-lg border border-white/10 bg-white/5 p-4">
+                            <div class="flex items-center justify-between gap-3">
+                                <div>
+                                    <label class="block text-sm font-semibold text-white">Programm</label>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 space-y-3">
+                                <% if (programs && programs.length) { %>
+                                    <% programs.forEach(function(p, idx){ %>
+                                        <div class="rounded-lg bg-white/3 p-3">
+                                            <div class="flex items-start justify-between">
+                                                <div class="mr-4">
+                                                    <div class="text-sm font-semibold text-white">
+                                                        <%= p.title || '—' %>
+                                                    </div>
+                                                    <% 
+                                                        const escapeHtml = (s) => String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+                                                        const desc = p.description ? escapeHtml(p.description).replace(/\r\n|\r|\n/g, '<br>') : '';
+                                                    %>
+                                                    <div class="text-xs text-gray-300 mt-1">
+                                                        <%- desc %>
+                                                    </div>
+                                                </div>
+                                                <div class="text-sm text-gray-200 text-right">
+                                                    <div>
+                                                        <%= p.time || '' %>
+                                                    </div>
+                                                    <div class="text-xs text-gray-300 mt-1">
+                                                        <%= p.responsible || '' %>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <% }) %>
+                                            <% } else { %>
+                                                <div class="text-gray-300">Kein Programm vorhanden.</div>
+                                                <% } %>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-6 pb-4">
+                        <label class="block text-sm font-semibold text-white">Ziel</label>
+                        <div class="mt-2 text-gray-200 text-left leading-normal">
+                            <%= activity.goal || '' %>
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-6 pb-4">
+                        <label class="block text-sm font-semibold text-white">Schlechtwetter-Info</label>
+                        <div class="mt-2 text-gray-200 text-left leading-normal"></div>
+                        <%= activity.bad_weather_info || '' %>
+                    </div>
+                </div>
+
+                <div class="sm:col-span-12">
+                    <label class="block text-sm font-semibold text-white">Materialien</label>
+                    <div class="mt-2">
+                        <% const mats=activity.materials || activity.material || []; %>
+                            <% if (mats && mats.length) { %>
+                                <ul class="space-y-2">
+                                    <% mats.forEach(function(m){ %>
+                                        <li class="inline-block rounded-md bg-white/5 px-3 py-1 text-sm text-gray-200">
+                                            <%= m %>
+                                        </li>
+                                        <% }) %>
+                                </ul>
+                                <% } else { %>
+                                    <div class="text-gray-300">Keine Materialien angegeben.</div>
+                                    <% } %>
+                    </div>
+                </div>
+
+                <div class="mt-6 sm:col-span-12">
+                    <a href="/activity/update?id=<%= activity.id %>"
+                        class="inline-flex items-center gap-2 rounded-md bg-white/10 px-3 py-2 text-sm font-semibold text-white hover:bg-white/20">Bearbeiten</a>
+                    <a href="/activity"
+                        class="ml-2 inline-flex items-center gap-2 rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-400">Zurück</a>
+                </div>
+
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <%- include('./partials/footer'); %>
+        </footer>
+
+        <script src="/js/activity.js" defer></script>
+</body>
+
+</html>
